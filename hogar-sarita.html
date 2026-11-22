@@ -32,8 +32,30 @@
   --ok:#8fcf86; --ok-soft:#24361f; --bad:#ef9189; --bad-soft:#47241f; --wait:#e8c26a; --wait-soft:#43361a;
   --holiday:#ec8c9d; --santa:#b9a0e0; --santa-soft:#352a47;
   --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.3); color-scheme:dark}
+/* Ambiente según la hora de Bogotá: toda la página cambia de paleta (madrugada, mañana, mediodía, tarde, noche, medianoche) */
+:root[data-tod="manana"],:root[data-tod="mediodia"],:root[data-tod="tarde"]{
+  --rose:#c2566b; --rose-soft:#f6d9de; --leaf:#5d7a3a; --leaf-soft:#dfe8cf; --sky:#3f72a0;
+  --ok:#3f7d3a; --ok-soft:#dcefd6; --bad:#a8423c; --bad-soft:#f6dcd8; --wait:#9a6a12; --wait-soft:#f7e8c6;
+  --holiday:#c2566b; --santa:#7b5aa6; --santa-soft:#ece3f6; --shadow:0 1px 2px rgba(80,50,20,.08),0 6px 18px rgba(80,50,20,.1); color-scheme:light}
+:root[data-tod="madrugada"],:root[data-tod="noche"],:root[data-tod="medianoche"]{
+  --rose:#ef94a5; --rose-soft:#4a2a3c; --leaf:#a3c47a; --leaf-soft:#2b3826; --sky:#93bce0;
+  --ok:#8fcf86; --ok-soft:#22351f; --bad:#ef9189; --bad-soft:#45241f; --wait:#e8c26a; --wait-soft:#41351a;
+  --holiday:#ef94a5; --santa:#c0a6e8; --santa-soft:#352a4a; --shadow:0 1px 2px rgba(0,0,0,.35),0 8px 22px rgba(0,0,0,.35); color-scheme:dark}
+:root[data-tod="madrugada"]{--bg:#221d3a; --surface:#2d2748; --surface-2:#3a3259; --line:#4c4371; --fg:#f4edff; --muted:#c4b8e2; --honey:#f2a487; --honey-soft:#4c3452;
+  --bg-grad:linear-gradient(180deg,#3b2f5c 0%,#221d3a 45%,#2a2140 100%)}
+:root[data-tod="manana"]{--bg:#fff5ea; --surface:#fffbf6; --surface-2:#fde8d4; --line:#f0d2b3; --fg:#3b2a1e; --muted:#7a604b; --honey:#d9822f; --honey-soft:#fde0c2;
+  --bg-grad:linear-gradient(180deg,#ffe6cc 0%,#fff5ea 40%,#f3f8ee 100%)}
+:root[data-tod="mediodia"]{--bg:#f3f8fc; --surface:#ffffff; --surface-2:#e5f0f8; --line:#cde0ee; --fg:#21303c; --muted:#56697a; --honey:#cf7a26; --honey-soft:#fbe3c6;
+  --bg-grad:linear-gradient(180deg,#d6ecfa 0%,#f3f8fc 45%,#fbf7ec 100%)}
+:root[data-tod="tarde"]{--bg:#fbead3; --surface:#fff5e7; --surface-2:#f5d9b3; --line:#e6c08e; --fg:#3e2814; --muted:#7f5e3c; --honey:#c4601c; --honey-soft:#f4cda0;
+  --bg-grad:linear-gradient(180deg,#f6c99a 0%,#fbead3 45%,#f7e2c8 100%)}
+:root[data-tod="noche"]{--bg:#141a33; --surface:#1d2444; --surface-2:#283157; --line:#374272; --fg:#eef1ff; --muted:#abb4da; --honey:#f0b45a; --honey-soft:#3d3652;
+  --bg-grad:linear-gradient(180deg,#232b57 0%,#141a33 50%,#1a1d38 100%)}
+:root[data-tod="medianoche"]{--bg:#0b0e1c; --surface:#131729; --surface-2:#1c2138; --line:#2b3152; --fg:#e6e9f7; --muted:#9ba2c4; --honey:#d9a856; --honey-soft:#2f2a3c;
+  --bg-grad:linear-gradient(180deg,#141a33 0%,#0b0e1c 50%,#0b0e1c 100%)}
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.5;
+html{background:var(--bg)}
+body{background:var(--bg);background-image:var(--bg-grad,none);background-attachment:fixed;transition:background-color 1.2s,color 1.2s;min-height:100vh;color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.5;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px 40px}
 .wrap{max-width:1200px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
 h1,h2,h3{font-family:var(--f-display);font-weight:600;text-wrap:balance;margin:0;line-height:1.15}
@@ -170,6 +192,15 @@ details.add summary{cursor:pointer;padding:10px 14px;font-weight:800;font-family
 .log-item{border:1px solid var(--line);border-radius:12px;padding:8px 10px;background:var(--bg);display:flex;flex-direction:column;gap:2px;font-size:.88rem}
 .log-item .h{display:flex;justify-content:space-between;gap:8px;font-weight:800}
 .log-item .h button{border:0;background:none;color:var(--muted);font-size:.8rem}
+
+/* Robot */
+.robot-panel{border:2px dashed var(--honey)}
+.robot-links{display:flex;gap:8px;flex-wrap:wrap}
+.robot-links a{background:var(--honey-soft);color:var(--fg);text-decoration:none;font-weight:800;font-size:.84rem;padding:5px 12px;border-radius:999px}
+.robot-links a:hover{background:var(--surface-2)}
+.robot-form{display:flex;flex-direction:column;gap:6px}
+.robot-form textarea{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:8px;font-size:.82rem;font-family:ui-monospace,Menlo,monospace;min-width:0;width:100%;resize:vertical}
+.robot-form .row-end{display:flex;gap:8px;justify-content:flex-end;align-items:center}
 
 /* Plan */
 .plan{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:.9rem}
@@ -333,6 +364,23 @@ details.add summary{cursor:pointer;padding:10px 14px;font-weight:800;font-family
     </div>
 
     <div class="col">
+      <section class="panel robot-panel" aria-labelledby="hRobot">
+        <div>
+          <h2 id="hRobot">Novedades del robot</h2>
+          <p class="muted small">Un robot gratuito de GitHub revisa tucesion.com y Tu360 (nuevos y usados) <b>cada 2 horas</b>, sin gastar tokens de Claude. Cuando encuentra algo nuevo, abre un aviso en GitHub que les llega al correo y al celular.</p>
+        </div>
+        <div class="robot-links">
+          <a href="https://github.com/serrodriguezg-ship-it/HOGARJULIETHSERGIO/blob/main/NOVEDADES.md" target="_blank" rel="noopener">Ver novedades</a>
+          <a href="https://github.com/serrodriguezg-ship-it/HOGARJULIETHSERGIO/blob/main/data/novedades.json" target="_blank" rel="noopener">Abrir novedades.json</a>
+          <a href="https://github.com/serrodriguezg-ship-it/HOGARJULIETHSERGIO/actions" target="_blank" rel="noopener">Buscar ahora</a>
+        </div>
+        <form id="robotForm" class="robot-form">
+          <label for="robotIn" class="small muted">Peguen aquí el contenido de <b>novedades.json</b> y Sarita lo pasa a la lista (las que ya decidieron no se tocan):</label>
+          <textarea id="robotIn" rows="3" placeholder='{"actualizado": "…", "items": [ … ]}'></textarea>
+          <div class="row-end"><span class="status" id="robotStatus"></span><button class="btn-main" type="submit">Pasar al tablero</button></div>
+        </form>
+      </section>
+
       <details class="panel cal-panel" id="calPanel">
         <summary class="cal-sum">
           <span><h2 id="hCal">Calendario</h2><span class="muted small" id="calTodayLbl">Hoy</span></span>
@@ -382,11 +430,12 @@ details.add summary{cursor:pointer;padding:10px 14px;font-weight:800;font-family
       <section class="panel" aria-labelledby="hPlan">
         <h2 id="hPlan">Plan de búsqueda</h2>
         <ol class="plan">
-          <li><b>Cesiones (tucesion.com):</b> cada 15 días. Hoy hay solo 15 cesiones activas en todo el país; cambian poco.</li>
-          <li><b>Usados en Tu360 (norte, nororiente, noroccidente):</b> una vez por semana, ordenando por “Lo más nuevo”.</li>
-          <li><b>Proyectos VIS nuevos:</b> una vez al mes, y antes de cada feria (Expovivienda) o apertura de Oferta Preferente de la Secretaría del Hábitat.</li>
+          <li><b>Nuevos, cesiones y usados (prioridad):</b> el robot de GitHub busca cada 2 horas, 12 veces al día, sin gastar tokens.</li>
+          <li><b>Pasar novedades al tablero:</b> cuando llegue un aviso, peguen <i>novedades.json</i> en “Novedades del robot”. Tampoco gasta tokens.</li>
+          <li><b>Proyectos de constructoras fuera de Tu360:</b> pídanle a Claude una revisión al mes, y antes de Expovivienda u Oferta Preferente.</li>
           <li><b>Subsidios:</b> revisar topes cada enero, cuando cambia el salario mínimo.</li>
         </ol>
+        <p class="muted small">Solo gastan tokens el chat con Sarita y las búsquedas que le pidan directamente a Claude.</p>
         <p class="muted small">Tope VIS 2026: 150 SMMLV ≈ $262,6 millones. Por eso el techo de 260 millones para nuevo encaja con VIS.</p>
       </section>
     </div>
@@ -432,6 +481,7 @@ function todFor(h, mi){
 let todOverride = "auto", currentTod = null;
 function applyTod(key){
   if (key === currentTod) return; currentTod = key;
+  document.documentElement.dataset.tod = key;
   const t = TODS[key], sc = $("#scene");
   sc.style.setProperty("--sky-grad", t.sky);
   $("#tint").style.background = t.tint;
@@ -687,6 +737,33 @@ $("#logForm").addEventListener("submit", async e => {
   catch(err){ $("#logStatus").textContent = "No se pudo anotar: " + (err.message||err.code||"error"); }
 });
 
+/* ---------- Novedades del robot (sin tokens) ---------- */
+$("#robotForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const st = $("#robotStatus");
+  if (!db){ st.textContent = "Abre la página con tu cuenta de Claude para guardar."; return; }
+  let data;
+  try { data = JSON.parse($("#robotIn").value); } catch(err){ st.textContent = "Eso no parece el contenido de novedades.json. Copien el archivo completo."; return; }
+  const lista = Array.isArray(data) ? data : (data.items || []);
+  const ids = new Set(items.map(x => x.id)), urls = new Set(items.map(x => x.url).filter(Boolean));
+  const CAMPOS = ["tipo","nombre","constructora","zona","area","precio","fechaPub","fuente","url","subsidios","nota"];
+  let nuevas = 0;
+  st.textContent = "Pasando…";
+  for (const it of lista){
+    if (!it || !it.id || !/^[\w.~:@+-]{1,200}$/.test(it.id) || !["nuevo","usado","cesion"].includes(it.tipo)) continue;
+    if (ids.has(it.id) || (it.url && urls.has(it.url))) continue;
+    const doc = {estado:"pendiente", creado:new Date().toISOString()};
+    CAMPOS.forEach(k => { const v = it[k]; doc[k] = (typeof v === "number" || v === null) ? v : String(v ?? "").slice(0, 600); });
+    if (!/^https?:\/\//.test(doc.url)) doc.url = "";
+    try { await db.collection("inmuebles").doc(it.id).set(doc); nuevas++; ids.add(it.id); } catch(err){}
+  }
+  try { await db.collection("busquedas").add({fecha:todayISO(), tipo:"nuevo", fuente:"Robot de GitHub (tucesion.com y Tu360)", criterios:"Nuevo hasta 260 M, usado 100–220 M en el norte, 37–50 m²",
+    resultados:nuevas, nota:`Novedades del ${String(data.actualizado || "").slice(0,40)}: ${lista.length} coincidencias, ${nuevas} nuevas en el tablero.`, creado:new Date().toISOString()}); } catch(err){}
+  $("#robotIn").value = "";
+  st.textContent = nuevas ? `Listo: ${nuevas} nuevas en “Por revisar”.` : "No había nada nuevo: ya estaban todas en el tablero.";
+  say(nuevas ? `¡Mami Julieth, papi Sergio! El robot trajo ${nuevas} opciones nuevas. Ustedes deciden cuáles aceptar.` : "Mami Julieth, papi Sergio: todo eso ya lo teníamos anotado.");
+});
+
 /* ---------- Chat with Sarita ---------- */
 let sample = null, history = [];
 const msgs = $("#msgs");
@@ -699,6 +776,7 @@ function context(){
 Reglas obligatorias: (1) Empieza SIEMPRE cada respuesta saludando primero a tu mamá y después a tu papá, en ese orden, por ejemplo "¡Hola, mami Julieth! ¡Hola, papi Sergio!". (2) Dirígete siempre a los dos juntos ("mami y papi", "ustedes"). (3) Toda decisión es de mami Julieth y papi Sergio: tú solo sugieres; termina recordando que ellos dos deciden juntos (por ejemplo "¿Qué deciden, mami y papi?"). Nunca decidas por ellos.
 Criterios de la familia: Nuevo VIS en Bogotá: presupuesto 210–260 millones COP, 37–50 m², que acepte subsidios (Mi Casa en Bogotá / Oferta Preferente de la Secretaría Distrital del Hábitat, caja de compensación, Mi Casa Ya si aplica, concurrencia de subsidios). Cesiones en tucesion.com también cuentan como nuevo. Usado: 100–220 millones COP, 37–50 m², en el norte, nororiente o noroccidente de Bogotá (Usaquén, Suba, Engativá, Chapinero norte, Barrios Unidos), buscando en Tu360 Bancolombia.
 Datos útiles: tope VIS 2026 = 150 SMMLV ≈ $262,6 millones. El subsidio distrital exige proyecto inscrito en la Secretaría del Hábitat. Los subsidios de vivienda nueva no aplican a usados (salvo programas específicos); para usado sirven cesantías, ahorro y crédito/leasing.
+Un robot gratuito de GitHub revisa tucesion.com y Tu360 cada 2 horas sin gastar tokens; sus hallazgos llegan con fuente "(robot)". Recomienda pasar las novedades al tablero desde el recuadro "Novedades del robot".
 No inventes proyectos, precios ni enlaces: si no está en la lista, dilo y sugiere dónde verificar. Fecha de hoy en Bogotá: ${todayISO()}.
 Lista guardada por la familia (JSON): ${JSON.stringify(rows)}
 Bitácora reciente (JSON): ${JSON.stringify(lg)}`;

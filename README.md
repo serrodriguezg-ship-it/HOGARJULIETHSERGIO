@@ -35,16 +35,24 @@ Tope VIS 2026: 150 SMMLV ≈ $262,6 millones (SMMLV 2026 ≈ $1.750.905). El tec
 
 **Usados (Tu360, noroccidente):** dos apartamentos en Compartir (Suba): 48 m² por $217 millones y 50 m² por $222 millones. Los filtros de precio y zona del sitio no se aplican bien, así que la revisión se hizo anuncio por anuncio.
 
-## Cada cuánto buscar
+## Búsqueda automática cada 2 horas (sin gastar tokens)
 
-Para no gastar el plan, una búsqueda de Claude por fuente y nada más:
+La búsqueda de nuevo y usado es prioritaria, así que la hace un **robot gratuito de GitHub Actions**, no Claude. Por eso no consume el plan.
 
-1. **Cesiones (tucesion.com):** cada 15 días. Hay pocas y cambian despacio.
-2. **Usados en Tu360:** una vez por semana, ordenando por "Lo más nuevo".
-3. **Proyectos VIS nuevos:** una vez al mes, y antes de cada feria (Expovivienda) o apertura de Oferta Preferente.
-4. **Subsidios:** cada enero, cuando cambia el salario mínimo.
+- **Qué revisa:** cesiones en tucesion.com y apartamentos nuevos y usados de Bogotá en Tu360 Bancolombia.
+- **Cada cuánto:** cada 2 horas (12 veces al día). También se puede correr a mano desde la pestaña **Actions → Búsqueda automática de apartamento → Run workflow**.
+- **Filtros:** nuevo hasta 260 M; cesión con costo total hasta 260 M; usado de 100 a 220 M en el norte, nororiente o noroccidente; todo entre 37 y 50 m².
+- **Resultados:** `NOVEDADES.md` (para leer) y `data/novedades.json` (para el tablero). `data/vistos.json` guarda el día en que el robot vio cada anuncio por primera vez; si el sitio no publica la fecha, ese día se usa como fecha de publicación.
+- **Aviso:** cuando hay algo nuevo, el robot abre un *issue* en GitHub, que llega por correo y a la app de GitHub.
+- **Pasarlo al tablero:** copien `data/novedades.json` y péguenlo en el recuadro **Novedades del robot** del tablero. Las opciones que ya aceptaron o descartaron no se tocan.
 
-Lo que se encuentre se registra en el tablero de Sarita, y Sarita lo puede comentar en el chat sin hacer búsquedas nuevas.
+**Importante:** GitHub solo corre las tareas programadas desde la rama principal (`main`). Hay que unir esta rama a `main` para que el robot arranque.
+
+Solo gastan tokens el chat con Sarita y las búsquedas que se le pidan directamente a Claude. Se recomienda pedirle a Claude, una vez al mes, revisar proyectos de constructoras que no estén en Tu360.
+
+### Primera corrida del robot (22 de noviembre de 2026)
+
+13 proyectos nuevos con precio "desde" en rango VIS en Tu360: Rosa Violeta Ciudad Rosales, Colina Reservado Club House, Prisma, Estación Fontibón, Senderos de Fontibón, Turín, San Gabriel, Andalucía y Alicante (Hacienda El Otoño, Lagos de Torca), Ciruelo (Hacienda El Bosque, Lagos de Torca), L80, Moratti Ciudad Hayuelos y Portal de Claretiano. Ver detalles en `NOVEDADES.md`.
 
 ## Cómo habla Sarita
 
@@ -53,6 +61,7 @@ Lo que se encuentre se registra en el tablero de Sarita, y Sarita lo puede comen
 - El chat "Hablar con Sarita" está justo debajo de las escenas, en un recuadro destacado.
 - Hay un botón flotante para llamar a Sarita desde cualquier parte de la página.
 - El calendario es desplegable y señala la fecha de hoy.
+- Toda la página cambia de ambiente según la hora de Bogotá: madrugada, mañana, mediodía, tarde, noche y medianoche.
 
 ## Notas técnicas
 
