@@ -46,6 +46,14 @@ Para no gastar el plan, una búsqueda de Claude por fuente y nada más:
 
 Lo que se encuentre se registra en el tablero de Sarita, y Sarita lo puede comentar en el chat sin hacer búsquedas nuevas.
 
+## Cómo habla Sarita
+
+- Siempre saluda primero a su mamá Julieth y después a su papá Sergio.
+- Se dirige a los dos juntos y les recuerda que las decisiones son de ellos.
+- El chat "Hablar con Sarita" está justo debajo de las escenas, en un recuadro destacado.
+- Hay un botón flotante para llamar a Sarita desde cualquier parte de la página.
+- El calendario es desplegable y señala la fecha de hoy.
+
 ## Notas técnicas
 
 - El tablero guarda los datos en la base de datos del artefacto (colecciones `inmuebles` y `busquedas`).

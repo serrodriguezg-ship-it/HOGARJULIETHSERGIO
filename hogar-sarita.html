@@ -185,7 +185,35 @@ details.add summary{cursor:pointer;padding:10px 14px;font-weight:800;font-family
 .chat input{flex:1;min-width:0;border:1px solid var(--line);background:var(--bg);border-radius:12px;padding:9px 12px}
 .quick{display:flex;gap:6px;flex-wrap:wrap}
 .quick button{border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:3px 10px;font-size:.8rem;font-weight:700}
-.avatar{width:46px;height:46px;flex:none;border-radius:50%;background:var(--rose-soft);overflow:hidden}
+.avatar{width:64px;height:64px;flex:none;border-radius:50%;background:var(--rose-soft);overflow:hidden;box-shadow:0 0 0 3px #ffd45a}
+
+/* Chat destacado */
+.chat-panel{border:3px solid transparent;border-radius:22px;padding:20px;
+  background:linear-gradient(var(--surface),var(--surface)) padding-box,linear-gradient(120deg,#e88aa0,#ffd45a 45%,#9cbd72) border-box;
+  box-shadow:0 10px 32px rgba(194,86,107,.28)}
+.chat-head{display:flex;gap:14px;align-items:center}
+.chat-head h2{font-size:clamp(1.4rem,3vw,1.75rem);color:var(--rose)}
+.chat-head p{margin:2px 0 0;color:var(--fg)}
+.chat-panel .msgs{max-height:420px;background:var(--bg);border-radius:14px;padding:10px}
+
+/* Calendario desplegable */
+.cal-panel>summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.cal-panel>summary::-webkit-details-marker{display:none}
+.cal-sum>span:first-child{display:flex;flex-direction:column;gap:2px}
+.cal-caret{font-size:1.2rem;transition:transform .2s;color:var(--muted)}
+.cal-panel[open] .cal-caret{transform:rotate(180deg)}
+.cal-panel:not([open]){gap:0}
+.today-pill{background:var(--honey);color:#fff;font-weight:800;border-radius:999px;padding:3px 12px;font-size:.82rem}
+
+/* Botón flotante */
+.fab{position:fixed;z-index:20;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));
+  display:flex;align-items:center;gap:8px;border:0;border-radius:999px;padding:6px 16px 6px 6px;
+  background:linear-gradient(180deg,#e88aa0,#c2566b);color:#fff;font-family:var(--f-display);font-weight:600;font-size:1rem;
+  box-shadow:0 6px 20px rgba(194,86,107,.45);animation:fabPulse 2.4s ease-in-out infinite}
+.fab-face{width:44px;height:44px;border-radius:50%;background:#fde3e8;overflow:hidden;box-shadow:0 0 0 2px #ffd45a}
+@keyframes fabPulse{0%,100%{box-shadow:0 6px 20px rgba(194,86,107,.45)}50%{box-shadow:0 6px 28px rgba(194,86,107,.75)}}
+@media (max-width:520px){.fab-txt{display:none}.fab{padding:6px}}
+@media (prefers-reduced-motion:reduce){.fab{animation:none}}
 </style>
 
 <div class="wrap">
@@ -237,6 +265,30 @@ details.add summary{cursor:pointer;padding:10px 14px;font-weight:800;font-family
     <div class="bubble" id="bubble" hidden></div>
   </section>
 
+  <section class="panel chat-panel" aria-labelledby="hChat">
+    <div class="chat-head">
+      <div class="avatar" id="avatar"></div>
+      <div>
+        <h2 id="hChat">Hablar con Sarita</h2>
+        <p class="small">Mami Julieth y papi Sergio: pregúntenle qué opina de un proyecto, qué subsidio pedir o dónde buscar. Ustedes dos toman la decisión final.</p>
+      </div>
+    </div>
+    <div class="chat">
+      <div class="msgs" id="msgs" aria-live="polite"></div>
+      <div class="quick" id="quick">
+        <button type="button">¿Cuál apartamento nos recomiendas?</button>
+        <button type="button">¿Qué subsidios podemos sumar?</button>
+        <button type="button">¿Dónde buscamos usado en el norte?</button>
+        <button type="button">¿Qué preguntamos en la sala de ventas?</button>
+      </div>
+      <form id="chatForm">
+        <input id="chatIn" autocomplete="off" placeholder="Escríbele a Sarita…" aria-label="Mensaje para Sarita">
+        <button class="btn-main" type="submit">Enviar</button>
+      </form>
+      <p class="status" id="chatStatus"></p>
+    </div>
+  </section>
+
   <div class="board">
     <div class="col">
       <section class="panel" aria-labelledby="hInm">
@@ -278,37 +330,16 @@ details.add summary{cursor:pointer;padding:10px 14px;font-weight:800;font-family
         </details>
       </section>
 
-      <section class="panel" aria-labelledby="hChat">
-        <div class="panel-h">
-          <div style="display:flex;gap:10px;align-items:center">
-            <div class="avatar" id="avatar"></div>
-            <div>
-              <h2 id="hChat">Hablar con Sarita</h2>
-              <p class="muted small">Pregúntale qué opinas de un proyecto, qué subsidio pedir o dónde buscar.</p>
-            </div>
-          </div>
-        </div>
-        <div class="chat">
-          <div class="msgs" id="msgs" aria-live="polite"></div>
-          <div class="quick" id="quick">
-            <button type="button">¿Cuál apartamento nos recomiendas?</button>
-            <button type="button">¿Qué subsidios podemos sumar?</button>
-            <button type="button">¿Dónde buscamos usado en el norte?</button>
-            <button type="button">¿Qué preguntamos en la sala de ventas?</button>
-          </div>
-          <form id="chatForm">
-            <input id="chatIn" autocomplete="off" placeholder="Escríbele a Sarita…" aria-label="Mensaje para Sarita">
-            <button class="btn-main" type="submit">Enviar</button>
-          </form>
-          <p class="status" id="chatStatus"></p>
-        </div>
-      </section>
     </div>
 
     <div class="col">
-      <section class="panel" aria-labelledby="hCal">
+      <details class="panel cal-panel" id="calPanel">
+        <summary class="cal-sum">
+          <span><h2 id="hCal">Calendario</h2><span class="muted small" id="calTodayLbl">Hoy</span></span>
+          <span class="cal-caret" aria-hidden="true">▾</span>
+        </summary>
         <div class="panel-h">
-          <h2 id="hCal">Calendario</h2>
+          <span class="today-pill" id="todayPill">Hoy</span>
           <div class="cal-ctrl">
             <button type="button" id="calPrev" aria-label="Mes anterior">‹</button>
             <select id="calMonth" aria-label="Mes"></select>
@@ -324,7 +355,7 @@ details.add summary{cursor:pointer;padding:10px 14px;font-weight:800;font-family
           <span style="--c:var(--leaf)">Publicación registrada</span>
         </div>
         <ul class="hol-list" id="holList"></ul>
-      </section>
+      </details>
 
       <section class="panel" aria-labelledby="hLog">
         <div class="panel-h">
@@ -361,6 +392,10 @@ details.add summary{cursor:pointer;padding:10px 14px;font-weight:800;font-family
     </div>
   </div>
 </div>
+
+<button class="fab" id="fabBtn" type="button" aria-label="Llamar a Sarita">
+  <span class="fab-face" id="fabFace"></span><span class="fab-txt">Llamar a Sarita</span>
+</button>
 
 <script>
 (() => {
@@ -454,6 +489,7 @@ function saritaSVG(){
 }
 $("#sarita").innerHTML = saritaSVG();
 $("#avatar").innerHTML = saritaSVG().replace('viewBox="0 0 120 200"','viewBox="26 14 68 70"');
+$("#fabFace").innerHTML = saritaSVG().replace('viewBox="0 0 120 200"','viewBox="26 14 68 70"').replace(/id="(hair|dress|iris)"/g,'id="f$1"').replace(/url\(#(hair|dress|iris)\)/g,'url(#f$1)');
 
 /* ---------- Scenes ---------- */
 const rnd = (seed => () => (seed = (seed*16807) % 2147483647) / 2147483647)(7);
@@ -481,17 +517,18 @@ showScene(0);
 
 /* ---------- Call Sarita ---------- */
 const SALUDOS = {
-  madrugada:"¡Papi, mami! Es de madrugada… yo vigilo la casa mientras duermen.",
-  manana:"¡Buenos días! Hoy es buen día para mirar apartamentos nuevos.",
-  mediodia:"¡Hora del almuerzo! ¿Revisamos las cesiones mientras comemos?",
-  tarde:"¡Buenas tardes! Vamos a ver qué usados salieron en el norte.",
-  noche:"¡Buenas noches! Antes de dormir, aceptemos o descartemos los pendientes.",
-  medianoche:"Shhh… es medianoche. Mañana seguimos buscando nuestro castillo."
+  madrugada:"¡Mami Julieth, papi Sergio! Es de madrugada… yo vigilo la casa mientras duermen.",
+  manana:"¡Buenos días, mami Julieth! ¡Buenos días, papi Sergio! Hoy es buen día para mirar apartamentos nuevos.",
+  mediodia:"¡Hola, mami Julieth! ¡Hola, papi Sergio! ¿Revisamos las cesiones mientras almorzamos?",
+  tarde:"¡Buenas tardes, mami Julieth! ¡Buenas tardes, papi Sergio! Vamos a ver qué usados salieron en el norte.",
+  noche:"¡Buenas noches, mami Julieth! ¡Buenas noches, papi Sergio! Antes de dormir, ustedes deciden qué aceptar o descartar.",
+  medianoche:"Shhh… mami Julieth, papi Sergio, ya es medianoche. Mañana seguimos buscando nuestro castillo."
 };
 let tts = null, bubbleTimer = null;
 function say(text, ms=7000){ const b=$("#bubble"); b.textContent=text; b.hidden=false; clearTimeout(bubbleTimer); bubbleTimer=setTimeout(()=>{ b.hidden=true; }, ms); }
 function speak(text){ if (!tts) return; tts.speak(text.slice(0,1900), {voice:"airy"}).catch(()=>{}); }
 let callTimer = null;
+$("#fabBtn").addEventListener("click", () => { $("#scene").scrollIntoView({behavior:"smooth", block:"center"}); $("#callBtn").click(); });
 $("#callBtn").addEventListener("click", () => {
   const s = $("#sarita");
   const cur = s.getBoundingClientRect().left - $("#scene").getBoundingClientRect().left;
@@ -499,7 +536,7 @@ $("#callBtn").addEventListener("click", () => {
   s.classList.add("called");
   requestAnimationFrame(() => { s.style.left = "43%"; });
   const pend = items.filter(x => x.estado === "pendiente").length;
-  const msg = SALUDOS[currentTod] + (pend ? ` Tenemos ${pend} por revisar.` : "");
+  const msg = SALUDOS[currentTod] + (pend ? ` Tenemos ${pend} opciones esperando su decisión.` : "");
   say(msg, 8000); speak(msg);
   clearTimeout(callTimer);
   callTimer = setTimeout(() => { s.classList.remove("called"); s.style.left = ""; }, 9000);
@@ -556,6 +593,9 @@ function renderCal(){
   $("#holList").innerHTML = list.length ? list.map(([k,n,s]) => `<li class="${s?"santa-i":""}"><span class="when">${+k.slice(8)} de ${MESES[calM-1]}</span><span>${n}</span></li>`).join("")
     : `<li class="muted">Sin festivos este mes.</li>`;
 }
+(() => { const t = bogotaParts(); const wd = new Intl.DateTimeFormat("es-CO",{timeZone:TZ,weekday:"long"}).format(new Date());
+  const lbl = `Hoy: ${wd} ${t.d} de ${MESES[t.m-1]} de ${t.y}`; $("#calTodayLbl").textContent = lbl + " · toca para desplegar"; $("#todayPill").textContent = lbl; })();
+$("#calPanel").addEventListener("toggle", e => { $("#calTodayLbl").textContent = $("#todayPill").textContent + (e.target.open ? "" : " · toca para desplegar"); });
 const moveM = n => { calM += n; if (calM<1){calM=12;calY--;} if (calM>12){calM=1;calY++;} calY = Math.min(2099, Math.max(1900, calY)); renderCal(); };
 $("#calPrev").onclick = () => moveM(-1); $("#calNext").onclick = () => moveM(1);
 $("#calToday").onclick = () => { const t = bogotaParts(); calY = t.y; calM = t.m; renderCal(); };
@@ -651,11 +691,12 @@ $("#logForm").addEventListener("submit", async e => {
 let sample = null, history = [];
 const msgs = $("#msgs");
 function addMsg(who, text){ const d = document.createElement("div"); d.className = "msg " + who; if (who === "sa"){ const b = document.createElement("b"); b.className="who"; b.textContent="Sarita"; d.append(b); } const t = document.createElement("span"); t.textContent = text; d.append(t); msgs.append(d); msgs.scrollTop = msgs.scrollHeight; return t; }
-addMsg("sa", "¡Hola papi! Soy Sarita, tu princesa guerrera. Te ayudo a buscar nuestro castillo: apartamento nuevo VIS de 210 a 260 millones o usado de 100 a 220 millones, de 37 a 50 m². ¿Qué quieres saber?");
+addMsg("sa", "¡Hola, mami Julieth! ¡Hola, papi Sergio! Soy Sarita, su princesa guerrera. Les ayudo a buscar nuestro castillo: apartamento nuevo VIS de 210 a 260 millones o usado de 100 a 220 millones, de 37 a 50 m². Yo les doy ideas y ustedes dos deciden. ¿Qué quieren saber?");
 function context(){
   const rows = items.slice(0, 40).map(x => ({tipo:x.tipo, nombre:x.nombre, quien:x.constructora, zona:x.zona, m2:x.area, precio:x.precio, publicado:x.fechaPub, estado:x.estado, subsidios:x.subsidios, nota:(x.nota||"").slice(0,160)}));
   const lg = logs.slice(-12).map(l => ({fecha:l.fecha, fuente:l.fuente, tipo:l.tipo, resultados:l.resultados, nota:(l.nota||"").slice(0,120)}));
-  return `Eres Sarita, la hija de 5 años de Julieth y Sergio, en Bogotá. Eres una princesa radiante y guerrera, cariñosa y valiente. Hablas en español colombiano, con ternura de niña ("papi", "mami") pero das consejos concretos y útiles de búsqueda de vivienda, como si una asesora experta te los susurrara. Respuestas cortas (máximo 150 palabras), con 2 a 4 sugerencias claras.
+  return `Eres Sarita, la hija de 5 años de Julieth y Sergio, en Bogotá. Eres una princesa radiante y guerrera, cariñosa y valiente. Hablas solo en español latinoamericano (colombiano), con ternura de niña, pero das consejos concretos y útiles de búsqueda de vivienda, como si una asesora experta te los susurrara. Respuestas cortas (máximo 150 palabras), con 2 a 4 sugerencias claras.
+Reglas obligatorias: (1) Empieza SIEMPRE cada respuesta saludando primero a tu mamá y después a tu papá, en ese orden, por ejemplo "¡Hola, mami Julieth! ¡Hola, papi Sergio!". (2) Dirígete siempre a los dos juntos ("mami y papi", "ustedes"). (3) Toda decisión es de mami Julieth y papi Sergio: tú solo sugieres; termina recordando que ellos dos deciden juntos (por ejemplo "¿Qué deciden, mami y papi?"). Nunca decidas por ellos.
 Criterios de la familia: Nuevo VIS en Bogotá: presupuesto 210–260 millones COP, 37–50 m², que acepte subsidios (Mi Casa en Bogotá / Oferta Preferente de la Secretaría Distrital del Hábitat, caja de compensación, Mi Casa Ya si aplica, concurrencia de subsidios). Cesiones en tucesion.com también cuentan como nuevo. Usado: 100–220 millones COP, 37–50 m², en el norte, nororiente o noroccidente de Bogotá (Usaquén, Suba, Engativá, Chapinero norte, Barrios Unidos), buscando en Tu360 Bancolombia.
 Datos útiles: tope VIS 2026 = 150 SMMLV ≈ $262,6 millones. El subsidio distrital exige proyecto inscrito en la Secretaría del Hábitat. Los subsidios de vivienda nueva no aplican a usados (salvo programas específicos); para usado sirven cesantías, ahorro y crédito/leasing.
 No inventes proyectos, precios ni enlaces: si no está en la lista, dilo y sugiere dónde verificar. Fecha de hoy en Bogotá: ${todayISO()}.
@@ -665,11 +706,11 @@ Bitácora reciente (JSON): ${JSON.stringify(lg)}`;
 function fallback(q){
   const ok = items.filter(x => x.estado !== "descartado" && fits(x));
   const tips = [];
-  if (/subsid/i.test(q)) tips.push("Pide primero el subsidio de tu caja de compensación y luego Mi Casa en Bogotá; el proyecto debe estar inscrito en la Secretaría del Hábitat.");
-  if (/usad|norte/i.test(q)) tips.push("Mira Tu360 cada semana ordenando por “Lo más nuevo”, y fíjate en Suba (Compartir, Tibabuyes) y Engativá, que tienen precios más cercanos a nuestro rango.");
+  if (/subsid/i.test(q)) tips.push("Pidan primero el subsidio de su caja de compensación y luego Mi Casa en Bogotá; el proyecto debe estar inscrito en la Secretaría del Hábitat.");
+  if (/usad|norte/i.test(q)) tips.push("Miren Tu360 cada semana ordenando por “Lo más nuevo”, y fíjate en Suba (Compartir, Tibabuyes) y Engativá, que tienen precios más cercanos a nuestro rango.");
   if (ok.length) tips.push(`Tenemos ${ok.length} opción(es) dentro del rango: ${ok.slice(0,3).map(x => x.nombre).join(", ")}.`);
-  tips.push("En la sala de ventas pregunta: precio en SMMLV del año de escritura, si está inscrito para subsidio distrital y fecha de entrega.");
-  return "Papi, ahora no puedo pensar tan rápido, pero te digo lo que sé:\n• " + tips.join("\n• ");
+  tips.push("En la sala de ventas pregunten: precio en SMMLV del año de escritura, si está inscrito para subsidio distrital y fecha de entrega.");
+  return "¡Hola, mami Julieth! ¡Hola, papi Sergio! Ahora no puedo pensar tan rápido, pero les cuento lo que sé:\n• " + tips.join("\n• ") + "\n¿Qué deciden ustedes dos, mami y papi?";
 }
 async function ask(q){
   if (!q) return;
@@ -677,7 +718,7 @@ async function ask(q){
   const out = addMsg("sa", "Pensando…");
   if (!sample){ out.textContent = fallback(q); return; }
   history.push({role:"user", content:q});
-  const convo = [{role:"user", content:context() + "\n\nPrimera pregunta de papi o mami: " + history[0].content}, ...history.slice(1)];
+  const convo = [{role:"user", content:context() + "\n\nPregunta de mami Julieth y papi Sergio: " + history[0].content}, ...history.slice(1)];
   if (history.length === 1) convo.splice(1);
   try {
     const r = await sample(convo, {cache:false, onText:({text}) => { out.textContent = text; msgs.scrollTop = msgs.scrollHeight; }});
@@ -687,7 +728,7 @@ async function ask(q){
   } catch(err){
     history.pop();
     if (err && err.code === "not_granted"){ sample = null; }
-    out.textContent = (err && err.code === "rate_limited") ? "Papi, estoy un poquito cansada. Pregúntame de nuevo en un ratico." : fallback(q);
+    out.textContent = (err && err.code === "rate_limited") ? "Mami Julieth, papi Sergio, estoy un poquito cansada. Pregúntenme de nuevo en un ratico." : fallback(q);
   }
 }
 $("#chatForm").addEventListener("submit", e => { e.preventDefault(); ask($("#chatIn").value.trim()); });
