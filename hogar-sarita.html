@@ -74,6 +74,7 @@ header.top{display:flex;flex-wrap:wrap;align-items:center;gap:14px 20px;justify-
 .brand p{margin:0;color:var(--muted);font-size:.9rem}
 .clock{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .clock .time{font-family:var(--f-display);font-size:2rem;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:.02em;line-height:1}
+.clock .time .ampm{font-size:.5em;margin-left:6px;letter-spacing:.04em;color:var(--honey);font-weight:700}
 .clock .meta{display:flex;flex-direction:column;font-size:.82rem;color:var(--muted);line-height:1.3}
 .tod-chip{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;background:var(--honey-soft);color:var(--fg);font-weight:700;font-size:.8rem}
 .btn{border:1px solid var(--line);background:var(--surface);padding:8px 14px;border-radius:10px;font-weight:700;transition:transform .15s,background .15s}
@@ -164,6 +165,21 @@ details.add summary{cursor:pointer;padding:10px 14px;font-weight:800;font-family
 .form .row-end{grid-column:1/-1;display:flex;gap:8px;justify-content:flex-end;align-items:center}
 .btn-main{background:var(--honey);color:#fff;border:0;border-radius:10px;padding:8px 16px;font-weight:800}
 .status{font-size:.82rem;color:var(--muted)}
+
+:root[data-tod="madrugada"] .btn-main,:root[data-tod="noche"] .btn-main,:root[data-tod="medianoche"] .btn-main,
+:root[data-tod="madrugada"] .today-pill,:root[data-tod="noche"] .today-pill,:root[data-tod="medianoche"] .today-pill{color:#1a1430}
+
+/* Papelera */
+.trash-list{display:flex;flex-direction:column;gap:8px}
+.trash-item{display:flex;gap:10px;align-items:center;flex-wrap:wrap;border:1px solid var(--line);border-radius:12px;padding:8px 10px;background:var(--bg)}
+.trash-item .info{flex:1;min-width:180px;display:flex;flex-direction:column;gap:2px}
+.trash-item .info b{overflow-wrap:anywhere}
+.trash-item .info span{font-size:.82rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.trash-item .tacts{display:flex;gap:6px;flex-wrap:wrap}
+.trash-item button,.btn.danger{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:4px 10px;font-size:.82rem;font-weight:800}
+.trash-item .restore{border-color:var(--ok);color:var(--ok)}
+.trash-item .purge,.btn.danger{border-color:var(--bad);color:var(--bad)}
+.trash-item .purge.armed,.btn.danger.armed{background:var(--bad);color:#fff}
 
 /* Calendar */
 .cal-ctrl{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
@@ -361,6 +377,20 @@ details.add summary{cursor:pointer;padding:10px 14px;font-weight:800;font-family
         </details>
       </section>
 
+      <section class="panel trash-panel" aria-labelledby="hTrash">
+        <div class="panel-h">
+          <div style="display:flex;gap:10px;align-items:center">
+            <svg width="30" height="30" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" fill="none" stroke="var(--muted)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 11v6M14 11v6" stroke="var(--muted)" stroke-width="2" stroke-linecap="round"/></svg>
+            <div>
+              <h2 id="hTrash">Papelera de apartamentos <span class="muted num" id="trashCount"></span></h2>
+              <p class="muted small">Aquí llegan los nuevos y usados que eliminen. Pueden devolverlos a “Proyectos y apartamentos” o borrarlos para siempre.</p>
+            </div>
+          </div>
+          <button type="button" class="btn danger" id="emptyTrash" hidden>Vaciar papelera</button>
+        </div>
+        <div class="trash-list" id="trashList"><div class="empty">La papelera está vacía.</div></div>
+      </section>
+
     </div>
 
     <div class="col">
@@ -494,7 +524,8 @@ function applyTod(key){
 }
 function tick(){
   const b = bogotaParts();
-  $("#clockTime").textContent = `${pad(b.h)}:${pad(b.mi)}:${pad(b.s)}`;
+  const h12 = b.h % 12 === 0 ? 12 : b.h % 12;
+  $("#clockTime").innerHTML = `${h12}:${pad(b.mi)}:${pad(b.s)}<span class="ampm">${b.h < 12 ? "a. m." : "p. m."}</span>`;
   const wd = new Intl.DateTimeFormat("es-CO",{timeZone:TZ,weekday:"long"}).format(new Date());
   $("#clockDate").textContent = `${wd} ${b.d} de ${MESES[b.m-1]} de ${b.y} · Bogotá`;
   applyTod(todOverride === "auto" ? todFor(b.h, b.mi) : todOverride);
@@ -627,7 +658,7 @@ function renderCal(){
   const startW = (first.getUTCDay() + 6) % 7; // lunes primero
   const days = new Date(Date.UTC(calY, calM, 0)).getUTCDate();
   const today = bogotaParts(); const todayK = `${today.y}-${pad(today.m)}-${pad(today.d)}`;
-  const pubs = new Set(items.map(x => x.fechaPub).filter(Boolean));
+  const pubs = new Set(items.filter(x => x.estado !== "papelera").map(x => x.fechaPub).filter(Boolean));
   let h = ["Lu","Ma","Mi","Ju","Vi","Sá","Do"].map(d => `<div class="dow">${d}</div>`).join("");
   for (let i=0;i<startW;i++) h += `<div></div>`;
   for (let d=1; d<=days; d++){
@@ -665,14 +696,16 @@ function fits(x){
 }
 function fmtDate(k){ if (!k) return "—"; const [y,m,d] = k.split("-"); return `${+d} ${MESES[+m-1].slice(0,3)} ${y}`; }
 function renderCards(){
-  const counts = {pendiente:0, aceptado:0, descartado:0, todos:items.length};
-  items.forEach(x => counts[x.estado] = (counts[x.estado]||0) + 1);
+  renderTrash();
+  const base = activos();
+  const counts = {pendiente:0, aceptado:0, descartado:0, todos:base.length};
+  base.forEach(x => counts[x.estado] = (counts[x.estado]||0) + 1);
   document.querySelectorAll("#estadoTabs .tab").forEach(b => { b.querySelector(".c").textContent = counts[b.dataset.estado] ?? 0; b.setAttribute("aria-pressed", b.dataset.estado === fEstado); });
   document.querySelectorAll("#tipoTabs .tab").forEach(b => b.setAttribute("aria-pressed", b.dataset.tipo === fTipo));
-  const list = items.filter(x => (fEstado === "todos" || x.estado === fEstado) && (fTipo === "todos" || x.tipo === fTipo))
+  const list = base.filter(x => (fEstado === "todos" || x.estado === fEstado) && (fTipo === "todos" || x.tipo === fTipo))
     .sort((a,b) => (b.fechaPub||"").localeCompare(a.fechaPub||"") || (b.creado||"").localeCompare(a.creado||""));
   if (!db && !items.length){ $("#cards").innerHTML = `<div class="empty">Para guardar la lista hace falta abrir esta página con tu cuenta de Claude.</div>`; return; }
-  if (!list.length){ $("#cards").innerHTML = `<div class="empty">${items.length ? "Nada en este grupo." : "Aún no hay opciones guardadas. Agrega la primera con el formulario de abajo."}</div>`; return; }
+  if (!list.length){ $("#cards").innerHTML = `<div class="empty">${base.length ? "Nada en este grupo." : "Aún no hay opciones guardadas. Agrega la primera con el formulario de abajo."}</div>`; return; }
   $("#cards").innerHTML = list.map(x => {
     const f = fits(x);
     return `<article class="card" data-estado="${esc(x.estado)}">
@@ -693,21 +726,66 @@ function renderCards(){
         <button class="yes" data-set="aceptado" aria-pressed="${x.estado==="aceptado"}">Aceptar</button>
         <button class="no" data-set="descartado" aria-pressed="${x.estado==="descartado"}">Descartar</button>
         <button class="wait" data-set="pendiente" aria-pressed="${x.estado==="pendiente"}">Pendiente</button>
-        <button class="del" data-del="1" title="Eliminar">Eliminar</button>
+        <button class="del" data-del="1" title="Mover a la papelera">Eliminar</button>
       </div></article>`;
   }).join("");
 }
 document.querySelector("#estadoTabs").addEventListener("click", e => { const b = e.target.closest(".tab"); if (b){ fEstado = b.dataset.estado; renderCards(); }});
 document.querySelector("#tipoTabs").addEventListener("click", e => { const b = e.target.closest(".tab"); if (b){ fTipo = b.dataset.tipo; renderCards(); }});
-const pendingDel = new Set();
 $("#cards").addEventListener("click", async e => {
   const b = e.target.closest("button"); if (!b || !db) return;
   const id = b.closest(".acts").dataset.id;
   if (b.dataset.set){ try { await db.collection("inmuebles").doc(id).update({estado:b.dataset.set, revisado:new Date().toISOString()}); } catch(err){ say("No pude guardar ese cambio. Revisa que tengas permiso de edición."); } }
   if (b.dataset.del){
-    if (!pendingDel.has(id)){ pendingDel.add(id); b.textContent = "¿Seguro?"; setTimeout(() => { pendingDel.delete(id); if (b.isConnected) b.textContent = "Eliminar"; }, 3000); return; }
-    try { await db.collection("inmuebles").doc(id).delete(); } catch(err){ say("No pude eliminarlo."); }
+    const x = items.find(i => i.id === id);
+    try { await db.collection("inmuebles").doc(id).update({estado:"papelera", estadoPrevio:(x && x.estado) || "pendiente", enPapelera:new Date().toISOString()});
+      say("Mami Julieth, papi Sergio: lo guardé en la papelera. Si cambian de idea, lo pueden devolver."); }
+    catch(err){ say("No pude moverlo a la papelera."); }
   }
+});
+
+/* ---------- Papelera ---------- */
+const activos = () => items.filter(x => x.estado !== "papelera");
+const ESTADO_LBL = {pendiente:"Por revisar", aceptado:"Aceptados", descartado:"Descartados"};
+function renderTrash(){
+  const t = items.filter(x => x.estado === "papelera").sort((a,b) => (b.enPapelera||"").localeCompare(a.enPapelera||""));
+  $("#trashCount").textContent = t.length ? `(${t.length})` : "";
+  $("#emptyTrash").hidden = !t.length;
+  if (!t.length){ $("#trashList").innerHTML = `<div class="empty">La papelera está vacía.</div>`; return; }
+  $("#trashList").innerHTML = t.map(x => `<div class="trash-item" data-id="${esc(x.id)}">
+    <div class="info"><b>${esc(x.nombre)}</b>
+      <span>${TIPO_LBL[x.tipo]||esc(x.tipo)} · ${esc(x.zona)||"—"} · ${x.area ? esc(x.area)+" m²" : "—"} · ${fmtCOP(+x.precio)}</span>
+      <span>Eliminado el ${x.enPapelera ? fmtDate(new Date(x.enPapelera).toLocaleDateString("en-CA",{timeZone:TZ})) : "—"} · vuelve a “${ESTADO_LBL[x.estadoPrevio]||"Por revisar"}”</span></div>
+    <div class="tacts"><button type="button" class="restore" data-restore="1">Devolver a proyectos</button><button type="button" class="purge" data-purge="1">Eliminar definitivamente</button></div>
+  </div>`).join("");
+}
+const armed = new Map();
+function arm(btn, key, label){ // doble toque para borrar para siempre
+  if (armed.has(key)) return true;
+  const old = btn.textContent; btn.textContent = label; btn.classList.add("armed");
+  armed.set(key, setTimeout(() => { armed.delete(key); if (btn.isConnected){ btn.textContent = old; btn.classList.remove("armed"); } }, 4000));
+  return false;
+}
+$("#trashList").addEventListener("click", async e => {
+  const b = e.target.closest("button"); if (!b || !db) return;
+  const id = b.closest(".trash-item").dataset.id, x = items.find(i => i.id === id);
+  if (b.dataset.restore){
+    try { await db.collection("inmuebles").doc(id).update({estado:(x && ESTADO_LBL[x.estadoPrevio]) ? x.estadoPrevio : "pendiente", enPapelera:null, estadoPrevio:null});
+      say("¡Listo, mami Julieth y papi Sergio! Volvió a “Proyectos y apartamentos”."); } catch(err){ say("No pude devolverlo."); }
+  }
+  if (b.dataset.purge){
+    if (!arm(b, "p:"+id, "¿Seguro? Toca otra vez")) return;
+    clearTimeout(armed.get("p:"+id)); armed.delete("p:"+id);
+    try { await db.collection("inmuebles").doc(id).delete(); say("Lo borré para siempre, como ustedes decidieron."); } catch(err){ say("No pude borrarlo."); }
+  }
+});
+$("#emptyTrash").addEventListener("click", async e => {
+  const b = e.currentTarget; if (!db) return;
+  if (!arm(b, "vaciar", "¿Vaciar todo? Toca otra vez")) return;
+  clearTimeout(armed.get("vaciar")); armed.delete("vaciar"); b.textContent = "Vaciar papelera"; b.classList.remove("armed");
+  const t = items.filter(x => x.estado === "papelera");
+  for (const x of t){ try { await db.collection("inmuebles").doc(x.id).delete(); } catch(err){} }
+  say(`Vacié la papelera: ${t.length} borrados para siempre.`);
 });
 function renderLog(){
   if (!db && !logs.length){ $("#log").innerHTML = `<div class="empty">La bitácora se guarda cuando abres la página con tu cuenta de Claude.</div>`; return; }
@@ -770,7 +848,7 @@ const msgs = $("#msgs");
 function addMsg(who, text){ const d = document.createElement("div"); d.className = "msg " + who; if (who === "sa"){ const b = document.createElement("b"); b.className="who"; b.textContent="Sarita"; d.append(b); } const t = document.createElement("span"); t.textContent = text; d.append(t); msgs.append(d); msgs.scrollTop = msgs.scrollHeight; return t; }
 addMsg("sa", "¡Hola, mami Julieth! ¡Hola, papi Sergio! Soy Sarita, su princesa guerrera. Les ayudo a buscar nuestro castillo: apartamento nuevo VIS de 210 a 260 millones o usado de 100 a 220 millones, de 37 a 50 m². Yo les doy ideas y ustedes dos deciden. ¿Qué quieren saber?");
 function context(){
-  const rows = items.slice(0, 40).map(x => ({tipo:x.tipo, nombre:x.nombre, quien:x.constructora, zona:x.zona, m2:x.area, precio:x.precio, publicado:x.fechaPub, estado:x.estado, subsidios:x.subsidios, nota:(x.nota||"").slice(0,160)}));
+  const rows = items.filter(x => x.estado !== "papelera").slice(0, 40).map(x => ({tipo:x.tipo, nombre:x.nombre, quien:x.constructora, zona:x.zona, m2:x.area, precio:x.precio, publicado:x.fechaPub, estado:x.estado, subsidios:x.subsidios, nota:(x.nota||"").slice(0,160)}));
   const lg = logs.slice(-12).map(l => ({fecha:l.fecha, fuente:l.fuente, tipo:l.tipo, resultados:l.resultados, nota:(l.nota||"").slice(0,120)}));
   return `Eres Sarita, la hija de 5 años de Julieth y Sergio, en Bogotá. Eres una princesa radiante y guerrera, cariñosa y valiente. Hablas solo en español latinoamericano (colombiano), con ternura de niña, pero das consejos concretos y útiles de búsqueda de vivienda, como si una asesora experta te los susurrara. Respuestas cortas (máximo 150 palabras), con 2 a 4 sugerencias claras.
 Reglas obligatorias: (1) Empieza SIEMPRE cada respuesta saludando primero a tu mamá y después a tu papá, en ese orden, por ejemplo "¡Hola, mami Julieth! ¡Hola, papi Sergio!". (2) Dirígete siempre a los dos juntos ("mami y papi", "ustedes"). (3) Toda decisión es de mami Julieth y papi Sergio: tú solo sugieres; termina recordando que ellos dos deciden juntos (por ejemplo "¿Qué deciden, mami y papi?"). Nunca decidas por ellos.
@@ -782,7 +860,7 @@ Lista guardada por la familia (JSON): ${JSON.stringify(rows)}
 Bitácora reciente (JSON): ${JSON.stringify(lg)}`;
 }
 function fallback(q){
-  const ok = items.filter(x => x.estado !== "descartado" && fits(x));
+  const ok = items.filter(x => x.estado !== "descartado" && x.estado !== "papelera" && fits(x));
   const tips = [];
   if (/subsid/i.test(q)) tips.push("Pidan primero el subsidio de su caja de compensación y luego Mi Casa en Bogotá; el proyecto debe estar inscrito en la Secretaría del Hábitat.");
   if (/usad|norte/i.test(q)) tips.push("Miren Tu360 cada semana ordenando por “Lo más nuevo”, y fíjate en Suba (Compartir, Tibabuyes) y Engativá, que tienen precios más cercanos a nuestro rango.");
