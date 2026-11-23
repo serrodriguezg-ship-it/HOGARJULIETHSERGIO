@@ -150,6 +150,18 @@ async function buscarTu360(page, estado) {
         nota: `Desde ${area} m² y desde $${precio.toLocaleString("es-CO")}.` });
     }
   }
+  // Dirección desde la ficha de cada coincidencia (para ubicarla en el mapa del tablero)
+  for (const it of items) {
+    try {
+      await page.goto(it.url, { waitUntil: "domcontentloaded", timeout: 60000 });
+      await page.waitForFunction(() => /ubicad[oa] en|#\s*\d+\s*-\s*\d+/i.test(document.body.innerText), null, { timeout: 20000 }).catch(() => {});
+      const txt = await page.evaluate(() => document.body.innerText);
+      const frase = (txt.match(/ubicad[oa] en (?:la |el )?([^.\n]{5,120})/i) || [])[1] || "";
+      const dir = (frase.match(/(?:avenida |av\.? )?(?:calle|carrera|cra|kr|cl|diagonal|transversal|ak|ac)\.?\s*\d+[^,\n]{0,40}?#\s*\d+\s*[-–]?\s*\d*(?:\s*(?:sur|este))?/i)
+        || txt.match(/(?:avenida |av\.? )?(?:calle|carrera|cra|kr|cl|diagonal|transversal)\.?\s*\d+[^,\n]{0,30}?#\s*\d+\s*[-–]\s*\d+(?:\s*(?:sur|este))?/i) || [])[0];
+      if (dir) it.direccion = dir.replace(/\s+/g, " ").trim();
+    } catch { /* sin dirección: el tablero lo ubica por el nombre del barrio */ }
+  }
   return { revisados: vistos.size, items };
 }
 
