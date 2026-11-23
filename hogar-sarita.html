@@ -1114,14 +1114,16 @@ const CAMPOS_ROBOT = ["tipo","nombre","constructora","zona","direccion","area","
 async function importarNovedades(data, origen){
   const lista = Array.isArray(data) ? data : ((data && data.items) || []);
   const ids = new Set(items.map(x => x.id)), urls = new Set(items.map(x => x.url).filter(Boolean));
+  const clave = x => (String(x.nombre || "").toLowerCase().replace(/[^a-z0-9áéíóúñ]+/g, " ").trim() + "|" + String(x.constructora || "").toLowerCase().trim());
+  const nombres = new Set(items.map(clave));
   let nuevas = 0;
   for (const it of lista){
     if (!it || !it.id || !/^[\w.~:@+-]{1,200}$/.test(it.id) || !["nuevo","usado","cesion"].includes(it.tipo)) continue;
-    if (ids.has(it.id) || (it.url && urls.has(it.url))) continue; // ya está (aunque esté en la papelera o descartado)
+    if (ids.has(it.id) || (it.url && urls.has(it.url)) || nombres.has(clave(it))) continue; // ya está (aunque esté en la papelera o descartado)
     const doc = {estado:"pendiente", creado:new Date().toISOString()};
     CAMPOS_ROBOT.forEach(k => { const v = it[k]; doc[k] = (typeof v === "number" || v === null) ? v : String(v ?? "").slice(0, 600); });
     if (!/^https?:\/\//.test(doc.url)) doc.url = "";
-    try { await db.collection("inmuebles").doc(it.id).set(doc); nuevas++; ids.add(it.id); if (doc.url) urls.add(doc.url); } catch(err){}
+    try { await db.collection("inmuebles").doc(it.id).set(doc); nuevas++; ids.add(it.id); nombres.add(clave(doc)); if (doc.url) urls.add(doc.url); } catch(err){}
   }
   if (nuevas || origen === "pegado"){
     try { await db.collection("busquedas").add({fecha:todayISO(), tipo:"nuevo", fuente:`Robot de GitHub (${origen === "drive" ? "sincronizado desde Drive" : "pegado a mano"})`,
