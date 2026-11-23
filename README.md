@@ -40,7 +40,7 @@ Tope VIS 2026: 150 SMMLV ≈ $262,6 millones (SMMLV 2026 ≈ $1.750.905). El tec
 La búsqueda de nuevo y usado es prioritaria, así que la hace un **robot gratuito de GitHub Actions**, no Claude. Por eso no consume el plan.
 
 - **Qué revisa:** cesiones en tucesion.com y apartamentos nuevos y usados de Bogotá en Tu360 Bancolombia.
-- **Cada cuánto:** cada 2 horas (12 veces al día). También se puede correr a mano desde la pestaña **Actions → Búsqueda automática de apartamento → Run workflow**.
+- **Cada cuánto:** cada 2 horas (12 veces al día), a la 1:17, 3:17, 5:17, 7:17, 9:17 y 11:17, a. m. y p. m., hora de Bogotá. También se puede correr a mano desde la pestaña **Actions → Búsqueda automática de apartamento → Run workflow**.
 - **Filtros:** nuevo hasta 260 M; cesión con costo total hasta 260 M; usado de 100 a 220 M en el norte, nororiente o noroccidente; todo entre 37 y 50 m².
 - **Resultados:** `NOVEDADES.md` (para leer) y `data/novedades.json` (para el tablero). `data/vistos.json` guarda el día en que el robot vio cada anuncio por primera vez; si el sitio no publica la fecha, ese día se usa como fecha de publicación.
 - **Aviso:** cuando hay algo nuevo, el robot abre un *issue* en GitHub, que llega por correo y a la app de GitHub.
@@ -63,6 +63,7 @@ Solo gastan tokens el chat con Sarita y las búsquedas que se le pidan directame
 - El calendario es desplegable y señala la fecha de hoy.
 - Toda la página cambia de ambiente según la hora de Bogotá: madrugada, mañana, mediodía, tarde, noche y medianoche.
 - El reloj muestra la hora de Bogotá en formato de 12 horas, con a. m. y p. m.
+- **Mapa de Bogotá:** dibujo de las 19 localidades urbanas, coloreadas por sector, con las zonas de búsqueda de usado marcadas. Cada apartamento es un punto (verde nuevo, rosado cesión, naranja usado); al tocarlo se ve su información y se puede aceptar, descartar o corregir la localidad. Los puntos se ubican por la dirección (el robot la toma de la ficha de Tu360) o por el nombre del barrio.
 - **Papelera de apartamentos:** lo que se elimina en "Proyectos y apartamentos" va a la papelera. Desde allí se puede devolver (vuelve al mismo grupo en que estaba) o eliminar definitivamente con doble toque. También se puede vaciar toda la papelera. El robot no vuelve a traer lo que está en la papelera.
 
 ## Notas técnicas
