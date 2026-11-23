@@ -1,18 +1,31 @@
 {
-  "actualizado": "22/11/2026, 7:03:03 p. m.",
+  "actualizado": "22/11/2026, 7:46:15 p. m.",
   "fuentes": {
     "cesiones": {
       "revisados": 12,
       "coincidencias": 0
     },
     "usados": {
-      "error": "page.goto: Timeout 90000ms exceeded.\nCall log:\n  - navigating to \"https://inmobiliariotu360.bancolombia.com/venta/apartamentos/bogota-d-c-/usado?map=category-1,category-2,ciudad,estado\", waiting until"
+      "revisados": 36,
+      "coincidencias": 1
     },
     "nuevos": {
-      "error": "page.goto: Timeout 90000ms exceeded.\nCall log:\n  - navigating to \"https://inmobiliariotu360.bancolombia.com/venta/apartamentos/bogota-d-c-/nuevo?map=category-1,category-2,ciudad,estado\", waiting until"
+      "revisados": 36,
+      "coincidencias": 13
+    },
+    "Constructora Bolívar": {
+      "revisados": 4,
+      "coincidencias": 1
+    },
+    "Marval": {
+      "revisados": 16,
+      "coincidencias": 1
     }
   },
-  "nuevas": [],
+  "nuevas": [
+    "auto-constructora-bolivar-trifonte-tres-quebradas",
+    "auto-marval-ciudad-la-salle-giverny"
+  ],
   "items": [
     {
       "id": "auto-tu360-to-en-venta-en-bogota-dc-compartir-ar-soluciones-inmobiliarias-sas-60676069512-3",
@@ -27,8 +40,7 @@
       "url": "https://inmobiliariotu360.bancolombia.com/apartamento-en-venta-en-bogota-dc-compartir-ar-soluciones-inmobiliarias-sas-60676069512-3/p",
       "subsidios": "Usado: crédito/leasing, cesantías, ahorro",
       "nota": "3 habitaciones.",
-      "detectado": "2026-11-22",
-      "vigente": false
+      "detectado": "2026-11-22"
     },
     {
       "id": "auto-tu360-rosa-violeta-ciudad-rosales",
@@ -43,8 +55,7 @@
       "url": "https://inmobiliariotu360.bancolombia.com/proyecto-de-vivienda-rosa-violeta-ciudad-rosales/p",
       "subsidios": "Precio en rango VIS: confirmar subsidio distrital y caja",
       "nota": "Desde 41 m² y desde $231.182.000.",
-      "detectado": "2026-11-22",
-      "vigente": false
+      "detectado": "2026-11-22"
     },
     {
       "id": "auto-tu360-colina-reservado-club-house",
@@ -59,8 +70,7 @@
       "url": "https://inmobiliariotu360.bancolombia.com/proyecto-de-vivienda-colina-reservado-club-house/p",
       "subsidios": "Precio en rango VIS: confirmar subsidio distrital y caja",
       "nota": "Desde 36 m² y desde $246.000.000.",
-      "detectado": "2026-11-22",
-      "vigente": false
+      "detectado": "2026-11-22"
     },
     {
       "id": "auto-tu360-prisma",
@@ -75,8 +85,8 @@
       "url": "https://inmobiliariotu360.bancolombia.com/proyecto-prisma/p",
       "subsidios": "Precio en rango VIS: confirmar subsidio distrital y caja",
       "nota": "Desde 30.1 m² y desde $195.000.000.",
-      "detectado": "2026-11-22",
-      "vigente": false
+      "direccion": "CALLE 15 Sur # 26 - 57",
+      "detectado": "2026-11-22"
     },
     {
       "id": "auto-tu360-estacion-fontibon",
@@ -91,8 +101,8 @@
       "url": "https://inmobiliariotu360.bancolombia.com/proyecto-de-vivienda-estacion-fontibon/p",
       "subsidios": "Precio en rango VIS: confirmar subsidio distrital y caja",
       "nota": "Desde 46 m² y desde $234.878.000.",
-      "detectado": "2026-11-22",
-      "vigente": false
+      "direccion": "Cra. 135 #17-98",
+      "detectado": "2026-11-22"
     },
     {
       "id": "auto-tu360-senderos-de-fontibon",
@@ -107,8 +117,7 @@
       "url": "https://inmobiliariotu360.bancolombia.com/proyecto-de-vivienda-senderos-de-fontibon/p",
       "subsidios": "Precio en rango VIS: confirmar subsidio distrital y caja",
       "nota": "Desde 36 m² y desde $243.080.000.",
-      "detectado": "2026-11-22",
-      "vigente": false
+      "detectado": "2026-11-22"
     },
     {
       "id": "auto-tu360-turin",
@@ -123,8 +132,8 @@
       "url": "https://inmobiliariotu360.bancolombia.com/proyecto-de-vivienda-turin/p",
       "subsidios": "Precio en rango VIS: confirmar subsidio distrital y caja",
       "nota": "Desde 46.3 m² y desde $255.000.000.",
-      "detectado": "2026-11-22",
-      "vigente": false
+      "direccion": "Avenida Carrera 116 # 22-17",
+      "detectado": "2026-11-22"
     },
     {
       "id": "auto-tu360-san-gabriel",
@@ -139,8 +148,8 @@
       "url": "https://inmobiliariotu360.bancolombia.com/proyecto-de-vivienda-san-gabriel/p",
       "subsidios": "Precio en rango VIS: confirmar subsidio distrital y caja",
       "nota": "Desde 36 m² y desde $248.000.000.",
-      "detectado": "2026-11-22",
-      "vigente": false
+      "direccion": "Avenida Carrera 30 # 6-35",
+      "detectado": "2026-11-22"
     },
     {
       "id": "auto-tu360-andalucia-hacienda-el-otono",
@@ -155,8 +164,7 @@
       "url": "https://inmobiliariotu360.bancolombia.com/proyecto-de-vivienda-andalucia-hacienda-el-otono/p",
       "subsidios": "Precio en rango VIS: confirmar subsidio distrital y caja",
       "nota": "Desde 44 m² y desde $251.400.000.",
-      "detectado": "2026-11-22",
-      "vigente": false
+      "detectado": "2026-11-22"
     },
     {
       "id": "auto-tu360-l80",
@@ -171,8 +179,7 @@
       "url": "https://inmobiliariotu360.bancolombia.com/proyecto-de-vivienda-l80/p",
       "subsidios": "Precio en rango VIS: confirmar subsidio distrital y caja",
       "nota": "Desde 32.9 m² y desde $259.500.000.",
-      "detectado": "2026-11-22",
-      "vigente": false
+      "detectado": "2026-11-22"
     },
     {
       "id": "auto-tu360-moratti-ciudad-hayuelos",
@@ -187,8 +194,7 @@
       "url": "https://inmobiliariotu360.bancolombia.com/proyecto-de-vivienda-moratti-ciudad-hayuelos/p",
       "subsidios": "Precio en rango VIS: confirmar subsidio distrital y caja",
       "nota": "Desde 42 m² y desde $252.919.000.",
-      "detectado": "2026-11-22",
-      "vigente": false
+      "detectado": "2026-11-22"
     },
     {
       "id": "auto-tu360-portal-de-claretiano",
@@ -203,8 +209,7 @@
       "url": "https://inmobiliariotu360.bancolombia.com/proyecto-de-vivienda-portal-de-claretiano/p",
       "subsidios": "Precio en rango VIS: confirmar subsidio distrital y caja",
       "nota": "Desde 41.4 m² y desde $214.719.000.",
-      "detectado": "2026-11-22",
-      "vigente": false
+      "detectado": "2026-11-22"
     },
     {
       "id": "auto-tu360-ciruelo-hacienda-el-bosque-lagos-de-torca",
@@ -219,8 +224,8 @@
       "url": "https://inmobiliariotu360.bancolombia.com/proyecto-de-vivienda-ciruelo-hacienda-el-bosque-lagos-de-torca/p",
       "subsidios": "Precio en rango VIS: confirmar subsidio distrital y caja",
       "nota": "Desde 44 m² y desde $252.000.000.",
-      "detectado": "2026-11-22",
-      "vigente": false
+      "direccion": "Calle 235 #52-50",
+      "detectado": "2026-11-22"
     },
     {
       "id": "auto-tu360-alicante-hacienda-el-otono-lagos-de-torca",
@@ -235,8 +240,39 @@
       "url": "https://inmobiliariotu360.bancolombia.com/proyecto-de-vivienda-alicante-hacienda-el-oto%C3%B1o-lagos-de-torca/p",
       "subsidios": "Precio en rango VIS: confirmar subsidio distrital y caja",
       "nota": "Desde 44 m² y desde $251.400.000.",
-      "detectado": "2026-11-22",
-      "vigente": false
+      "detectado": "2026-11-22"
+    },
+    {
+      "id": "auto-constructora-bolivar-trifonte-tres-quebradas",
+      "tipo": "nuevo",
+      "nombre": "Trifonte - Tres Quebradas",
+      "constructora": "Constructora Bolívar",
+      "zona": "Bogotá – Sur Oriente",
+      "direccion": "",
+      "area": 47,
+      "precio": 204020000,
+      "fechaPub": "2026-11-22",
+      "fuente": "Constructora Bolívar (robot)",
+      "url": "https://www.constructorabolivar.com/proyectos-vivienda/bogota/trifonte-tres-quebradas",
+      "subsidios": "Proyecto VIS/VIP: confirmar subsidio distrital y caja",
+      "nota": "VIS. Desde 47 m² y $204.020.000.",
+      "detectado": "2026-11-22"
+    },
+    {
+      "id": "auto-marval-ciudad-la-salle-giverny",
+      "tipo": "nuevo",
+      "nombre": "Ciudad La Salle Giverny",
+      "constructora": "Marval",
+      "zona": "Bogotá",
+      "direccion": "",
+      "area": 30.09,
+      "precio": 188941000,
+      "fechaPub": "2026-11-22",
+      "fuente": "Marval (robot)",
+      "url": "https://proyectos.marval.com.co/ciudad-la-salle-giverny",
+      "subsidios": "Proyecto VIS/VIP: confirmar subsidio distrital y caja",
+      "nota": "VIS. Desde 30.09 m² y $188.941.000.",
+      "detectado": "2026-11-22"
     }
   ]
 }
