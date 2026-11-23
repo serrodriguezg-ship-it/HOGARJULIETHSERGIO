@@ -1,5 +1,5 @@
 {
-  "actualizado": "22/11/2026, 7:46:15 p. m.",
+  "actualizado": "22/11/2026, 8:15:32 p. m.",
   "fuentes": {
     "cesiones": {
       "revisados": 12,
@@ -20,11 +20,30 @@
     "Marval": {
       "revisados": 16,
       "coincidencias": 1
+    },
+    "Ingeurbe": {
+      "revisados": 18,
+      "coincidencias": 3
+    },
+    "Cusezar": {
+      "revisados": 26,
+      "coincidencias": 5
+    },
+    "Artis Urbano": {
+      "revisados": 5,
+      "coincidencias": 1
     }
   },
   "nuevas": [
-    "auto-constructora-bolivar-trifonte-tres-quebradas",
-    "auto-marval-ciudad-la-salle-giverny"
+    "auto-ingeurbe-vivienda-de-interes-social-en-bogota",
+    "auto-ingeurbe-53-living",
+    "auto-ingeurbe-centrik-park",
+    "auto-cusezar-la-union-i",
+    "auto-cusezar-la-gratitud-i",
+    "auto-cusezar-la-union-ii",
+    "auto-cusezar-la-gratitud-iv",
+    "auto-cusezar-la-gratitud-ii",
+    "auto-artis-urbano-arbore"
   ],
   "items": [
     {
@@ -272,6 +291,150 @@
       "url": "https://proyectos.marval.com.co/ciudad-la-salle-giverny",
       "subsidios": "Proyecto VIS/VIP: confirmar subsidio distrital y caja",
       "nota": "VIS. Desde 30.09 m² y $188.941.000.",
+      "detectado": "2026-11-22"
+    },
+    {
+      "id": "auto-ingeurbe-vivienda-de-interes-social-en-bogota",
+      "tipo": "nuevo",
+      "nombre": "Centrik Park",
+      "constructora": "Ingeurbe",
+      "zona": "Bogotá",
+      "direccion": "",
+      "area": 30,
+      "precio": 255900000,
+      "fechaPub": "2026-11-22",
+      "fuente": "Ingeurbe (robot)",
+      "url": "https://ingeurbe.com/proyecto/vivienda-de-interes-social-en-bogota",
+      "subsidios": "Precio en rango VIS: confirmar",
+      "nota": "Desde 30 m² y $255.900.000.",
+      "detectado": "2026-11-22"
+    },
+    {
+      "id": "auto-ingeurbe-53-living",
+      "tipo": "nuevo",
+      "nombre": "53 Living: Apartaestudios cerca a la Calle 26, Bogotá",
+      "constructora": "Ingeurbe",
+      "zona": "Bogotá",
+      "direccion": "",
+      "area": 28,
+      "precio": 245600000,
+      "fechaPub": "2026-11-22",
+      "fuente": "Ingeurbe (robot)",
+      "url": "https://ingeurbe.com/proyecto/53-living",
+      "subsidios": "Proyecto VIS/VIP: confirmar subsidio distrital y caja",
+      "nota": "VIS. Desde 28 m² y $245.600.000.",
+      "detectado": "2026-11-22"
+    },
+    {
+      "id": "auto-ingeurbe-centrik-park",
+      "tipo": "nuevo",
+      "nombre": "Centrik Park",
+      "constructora": "Ingeurbe",
+      "zona": "Bogotá",
+      "direccion": "",
+      "area": 30,
+      "precio": 255900000,
+      "fechaPub": "2026-11-22",
+      "fuente": "Ingeurbe (robot)",
+      "url": "https://ingeurbe.com/proyecto/centrik-park",
+      "subsidios": "Precio en rango VIS: confirmar",
+      "nota": "Desde 30 m² y $255.900.000.",
+      "detectado": "2026-11-22"
+    },
+    {
+      "id": "auto-cusezar-la-union-i",
+      "tipo": "nuevo",
+      "nombre": "Union Bosa",
+      "constructora": "Cusezar",
+      "zona": "Bogotá",
+      "direccion": "",
+      "area": 48,
+      "precio": 231700000,
+      "fechaPub": "2026-11-22",
+      "fuente": "Cusezar (robot)",
+      "url": "https://cusezar.com/proyectos/con-subsidio/la-union-i",
+      "subsidios": "Proyecto VIS/VIP: confirmar subsidio distrital y caja",
+      "nota": "VIS. Desde 48 m² y $231.700.000.",
+      "detectado": "2026-11-22"
+    },
+    {
+      "id": "auto-cusezar-la-gratitud-i",
+      "tipo": "nuevo",
+      "nombre": "La Gratitud I",
+      "constructora": "Cusezar",
+      "zona": "Bogotá",
+      "direccion": "",
+      "area": 44,
+      "precio": 231000000,
+      "fechaPub": "2026-11-22",
+      "fuente": "Cusezar (robot)",
+      "url": "https://cusezar.com/proyectos/con-subsidio/la-gratitud-i",
+      "subsidios": "Proyecto VIS/VIP: confirmar subsidio distrital y caja",
+      "nota": "VIS. Desde 44 m² y $231.000.000.",
+      "detectado": "2026-11-22"
+    },
+    {
+      "id": "auto-cusezar-la-union-ii",
+      "tipo": "nuevo",
+      "nombre": "La Union Ii",
+      "constructora": "Cusezar",
+      "zona": "Bogotá",
+      "direccion": "",
+      "area": 41,
+      "precio": 211400000,
+      "fechaPub": "2026-11-22",
+      "fuente": "Cusezar (robot)",
+      "url": "https://cusezar.com/proyectos/con-subsidio/la-union-ii",
+      "subsidios": "Proyecto VIS/VIP: confirmar subsidio distrital y caja",
+      "nota": "VIS. Desde 41 m² y $211.400.000.",
+      "detectado": "2026-11-22"
+    },
+    {
+      "id": "auto-cusezar-la-gratitud-iv",
+      "tipo": "nuevo",
+      "nombre": "La Gratitud Iv",
+      "constructora": "Cusezar",
+      "zona": "Bogotá",
+      "direccion": "",
+      "area": 44,
+      "precio": 231000000,
+      "fechaPub": "2026-11-22",
+      "fuente": "Cusezar (robot)",
+      "url": "https://cusezar.com/proyectos/con-subsidio/la-gratitud-iv",
+      "subsidios": "Proyecto VIS/VIP: confirmar subsidio distrital y caja",
+      "nota": "VIS. Desde 44 m² y $231.000.000.",
+      "detectado": "2026-11-22"
+    },
+    {
+      "id": "auto-cusezar-la-gratitud-ii",
+      "tipo": "nuevo",
+      "nombre": "La Gratitud Ii",
+      "constructora": "Cusezar",
+      "zona": "Bogotá",
+      "direccion": "",
+      "area": 41,
+      "precio": 215300000,
+      "fechaPub": "2026-11-22",
+      "fuente": "Cusezar (robot)",
+      "url": "https://cusezar.com/proyectos/con-subsidio/la-gratitud-ii",
+      "subsidios": "Proyecto VIS/VIP: confirmar subsidio distrital y caja",
+      "nota": "VIS. Desde 41 m² y $215.300.000.",
+      "detectado": "2026-11-22"
+    },
+    {
+      "id": "auto-artis-urbano-arbore",
+      "tipo": "nuevo",
+      "nombre": "Arboré",
+      "constructora": "Artis Urbano",
+      "zona": "Bogotá",
+      "direccion": "",
+      "area": 42.02,
+      "precio": 245000000,
+      "fechaPub": "2026-11-22",
+      "fuente": "Artis Urbano (robot)",
+      "url": "https://www.artisurbano.com/proyectos/ver/2/arbore",
+      "subsidios": "Proyecto VIS/VIP: confirmar subsidio distrital y caja",
+      "nota": "VIS. Desde 42.02 m² y $245.000.000.",
       "detectado": "2026-11-22"
     }
   ]
