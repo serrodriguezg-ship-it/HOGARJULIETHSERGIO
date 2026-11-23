@@ -173,42 +173,64 @@ const CONSTRUCTORAS = [
   { nombre: "Constructora Bolívar", listas: ["https://www.constructorabolivar.com/proyectos-vivienda", "https://www.constructorabolivar.com/proyectos-vivienda/bogota"],
     patron: /^https:\/\/www\.constructorabolivar\.com\/proyectos-vivienda\/bogota\/[a-z0-9-]+\/?$/i, bogotaEnUrl: true },
   { nombre: "Marval", listas: ["https://marval.com.co/", "https://marval.com.co/mega-proyectos", "https://proyectos.marval.com.co/"],
-    patron: /^https:\/\/proyectos\.marval\.com\.co\/[a-z0-9-]+\/?$/i, bogotaEnUrl: false }
+    patron: /^https:\/\/proyectos\.marval\.com\.co\/[a-z0-9-]+\/?$/i, bogotaEnUrl: false },
+  { nombre: "Ingeurbe", listas: ["https://ingeurbe.com/todos-los-proyectos/", "https://ingeurbe.com/"],
+    patron: /^https:\/\/ingeurbe\.com\/proyecto\/[a-z0-9-]+\/?$/i, bogotaEnUrl: false },
+  { nombre: "Cusezar", listas: ["https://cusezar.com/home-proyectos/", "https://cusezar.com/"],
+    patron: /^https:\/\/cusezar\.com\/proyectos\/(con-subsidio\/)?[a-z0-9-]+\/?$/i, bogotaEnUrl: false },
+  { nombre: "Artis Urbano", listas: ["https://www.artisurbano.com/proyectos/ciudad/2/bogota", "https://www.artisurbano.com/proyectos"],
+    patron: /^https:\/\/www\.artisurbano\.com\/proyectos\/ver\/\d+\/[a-z0-9-]+\/?$/i, bogotaEnUrl: false }
 ];
-const PRECIO_RE = /\$\s?(\d{2,3}(?:[.,]\d{3}){2})/;
+// Municipios vecinos: si aparecen arriba en la ficha y Bogotá no, el proyecto no es de Bogotá
+const OTROS_MUNICIPIOS = /cajic|zipaquir|soacha|mosquera|madrid|funza|ch[ií]a\b|girardot|ricaurte|tocancip|sop[oó]|la calera|facatativ|cota\b|tabio|tenjo|gachancip|fusagasug|villeta|anapoima/i;
+const PRECIO_RE = /\$\s?(\d{2,3}(?:[.,]\s?\d{3}){2})/;
+const MILLONES_RE = /(?:desde|precio)[^\d$]{0,20}\$?\s?(\d{3})(?:[.,]\d+)?\s?(?:millones|mill\.?)\b/i;
 const AREA_RE = /(\d{2,3}(?:[.,]\d{1,2})?)\s?(?:m2|m²|mt2)/i;
-async function buscarConstructora(page, c) {
+async function buscarConstructora(pagina, c) {
   modoEstricto = false;
+  // navegador propio por constructora: si una página lo bloquea o lo cierra, las demás siguen
+  const nav = await chromium.launch();
+  const page = await (await nav.newContext({ viewport: { width: 1366, height: 900 }, locale: "es-CO" })).newPage();
+  await prepararPagina(page);
   const enlaces = new Set();
+  const recoger = async () => {
+    const hrefs = await page.evaluate(() => [...document.querySelectorAll("a[href]")].map(a => a.href.split(/[?#]/)[0])).catch(() => []);
+    hrefs.filter(h => c.patron.test(h)).forEach(h => enlaces.add(h.replace(/\/$/, "")));
+  };
   for (const url of c.listas) {
     try {
       await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60000 });
       await page.waitForTimeout(5000);
       for (let ronda = 0; ronda < 4; ronda++) {
         await desplazar(page, 5);
-        const mas = page.locator('button:has-text("Ver más"), button:has-text("Cargar más"), a:has-text("Ver más proyectos")').first();
+        await recoger();
+        const mas = page.locator('button:has-text("Ver más"), button:has-text("Cargar más")').first();
         if (await mas.count()) { try { await mas.click({ timeout: 4000 }); await page.waitForTimeout(2500); } catch { break; } } else break;
       }
-      const hrefs = await page.evaluate(() => [...document.querySelectorAll("a[href]")].map(a => a.href.split(/[?#]/)[0]));
-      hrefs.filter(h => c.patron.test(h)).forEach(h => enlaces.add(h.replace(/\/$/, "")));
+      await recoger();
     } catch { /* la lista no cargó */ }
   }
   const items = [];
-  for (const url of [...enlaces].slice(0, 40)) {
+  for (const url of [...enlaces].slice(0, 25)) {
     try {
       await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60000 });
       await page.waitForFunction(() => /\$\s?\d{2,3}[.,]\d{3}[.,]\d{3}/.test(document.body.innerText), null, { timeout: 15000 }).catch(() => {});
       const { txt, h1 } = await page.evaluate(() => ({ txt: document.body.innerText, h1: (document.querySelector("h1") || {}).innerText || document.title }));
-      if (!c.bogotaEnUrl && !/bogot/i.test(txt)) continue;
+      const cabecera = txt.slice(0, 4000), arriba = txt.slice(0, 1500);
+      if (!c.bogotaEnUrl && (!/bogot/i.test(cabecera) || (OTROS_MUNICIPIOS.test(arriba) && !/bogot/i.test(arriba)))) continue;
       if (/^\s*(vendido|agotado)\b/im.test(txt.slice(0, 1500))) continue;
-      const precio = num((txt.match(PRECIO_RE) || [])[1]);
+      let precio = num((txt.match(PRECIO_RE) || [])[1]);
+      if (!precio) { const mm = txt.match(MILLONES_RE); if (mm) precio = Number(mm[1]) * 1e6; }
       const area = Number(((txt.match(AREA_RE) || [])[1] || "").replace(",", ".")) || null;
       if (!precio || precio > CRITERIOS.nuevo.max || (area && area > CRITERIOS.area[1])) continue;
       const frase = (txt.match(/ubicad[oa] en (?:la |el )?([^.\n]{5,120})/i) || [])[1] || "";
       const dir = (frase.match(/(?:avenida |av\.? )?(?:calle|carrera|cra|kr|cl|diagonal|transversal|ak|ac)\.?\s*\d+[^,\n]{0,40}?#\s*\d+\s*[-–]?\s*\d*(?:\s*(?:sur|este))?/i) || [])[0];
       const sector = (txt.match(/Bogot[aá][^\n/]{0,40}\/\s*([A-Za-zÁÉÍÓÚáéíóúñ ]{3,25})/) || [])[1];
       const vis = /\bVIS\b|\bVIP\b|inter[eé]s social/i.test(txt);
-      const nombre = String(h1).replace(/\s+/g, " ").trim().slice(0, 80);
+      let nombre = String(h1).replace(/#\S+/g, "").replace(/\s+/g, " ").trim();
+      for (let k = 0; k < 3; k++) nombre = nombre.replace(/^(proyecto( de)? vivienda|proyecto|vivienda)( vis| vip)?\s*/i, "");
+      nombre = nombre.replace(/[.\s]+$/, "").slice(0, 80);
+      if (nombre === nombre.toUpperCase()) nombre = nombre.toLowerCase().replace(/(^|\s)\S/g, x => x.toUpperCase());
       if (/^macroproyecto/i.test(nombre)) continue; // la ficha general repite los proyectos que contiene
       items.push({ id: "auto-" + slug(c.nombre.replace(/\s+/g, "-") + "-" + url.split("/").pop() + "/x"), tipo: "nuevo", nombre,
         constructora: c.nombre, zona: sector ? `Bogotá – ${sector.trim()}` : "Bogotá", direccion: dir ? dir.replace(/\s+/g, " ").trim() : "",
@@ -217,6 +239,7 @@ async function buscarConstructora(page, c) {
         nota: `${vis ? "VIS. " : ""}Desde ${area ? area + " m² y " : ""}$${precio.toLocaleString("es-CO")}.` });
     } catch { /* ficha sin cargar */ }
   }
+  await nav.close().catch(() => {});
   modoEstricto = true;
   return { revisados: enlaces.size, items };
 }
@@ -226,14 +249,16 @@ async function buscarConstructora(page, c) {
   fs.mkdirSync(DATA, { recursive: true });
   const vistosPrev = leer(path.join(DATA, "vistos.json"), {});
   const navegador = await chromium.launch();
-  const page = await navegador.newPage({ viewport: { width: 1366, height: 900 }, locale: "es-CO",
+  const contexto = await navegador.newContext({ viewport: { width: 1366, height: 900 }, locale: "es-CO",
     userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36" });
+  const page = await contexto.newPage();
   await prepararPagina(page);
   const fuentes = {};
   const resultados = [];
   const tareas = [["cesiones", () => buscarCesiones(page)], ["usados", () => buscarTu360(page, "usado")], ["nuevos", () => buscarTu360(page, "nuevo")],
     ...CONSTRUCTORAS.map(c => [c.nombre, () => buscarConstructora(page, c)])];
-  for (const [nombre, fn] of tareas) {
+  const SOLO = process.env.SOLO ? new RegExp(process.env.SOLO, "i") : null; // para pruebas: SOLO="Cusezar|Ingeurbe"
+  for (const [nombre, fn] of tareas.filter(([n]) => !SOLO || SOLO.test(n))) {
     try { const r = await fn(); fuentes[nombre] = { revisados: r.revisados, coincidencias: r.items.length }; resultados.push(...r.items); }
     catch (e) { fuentes[nombre] = { error: String(e.message || e).split("\n")[0].replace(/\|/g, "/").slice(0, 160) }; }
   }
