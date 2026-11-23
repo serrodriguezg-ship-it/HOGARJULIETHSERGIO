@@ -727,9 +727,8 @@ const SALUDOS = {
   noche:"¡Buenas noches, mami Julieth! ¡Buenas noches, papi Sergio! Antes de dormir, ustedes deciden qué aceptar o descartar.",
   medianoche:"Shhh… mami Julieth, papi Sergio, ya es medianoche. Mañana seguimos buscando nuestro castillo."
 };
-let tts = null, bubbleTimer = null;
+let bubbleTimer = null;
 function say(text, ms=7000){ const b=$("#bubble"); b.textContent=text; b.hidden=false; clearTimeout(bubbleTimer); bubbleTimer=setTimeout(()=>{ b.hidden=true; }, ms); }
-function speak(text){ if (!tts) return; tts.speak(text.slice(0,1900), {voice:"airy"}).catch(()=>{}); }
 let callTimer = null;
 function mostrarChat(){ // al llamar a Sarita, el chat queda a la vista (con la escena encima si cabe)
   const sc = $("#scene"), ch = $(".chat-panel");
@@ -750,7 +749,7 @@ $("#callBtn").addEventListener("click", () => {
   requestAnimationFrame(() => { s.style.left = "43%"; });
   const pend = items.filter(x => x.estado === "pendiente").length;
   const msg = SALUDOS[currentTod] + (pend ? ` Tenemos ${pend} opciones esperando su decisión.` : "");
-  say(msg, 8000); speak(msg);
+  say(msg, 8000); // sin voz: Sarita saluda por escrito en la escena y en el chat
   addMsg("sa", msg + " ¿En qué les ayudo?");
   mostrarChat();
   clearTimeout(callTimer);
@@ -1250,7 +1249,6 @@ $("#quick").addEventListener("click", e => { const b = e.target.closest("button"
 tick(); setInterval(tick, 1000); renderCal();
 (async () => {
   if (!window.claude || !window.claude.use){ renderCards(); renderLog(); return; }
-  claude.use("tts").then(t => { tts = t; }).catch(() => {});
   claude.use("sample").then(s => { sample = s; }).catch(() => {});
   const loadTimer = setTimeout(() => { if (!items.length){ renderCards(); renderLog(); } }, 10000);
   try {
