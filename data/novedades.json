@@ -1,5 +1,5 @@
 {
-  "actualizado": "23/11/2026, 2:52:13 a. m.",
+  "actualizado": "23/11/2026, 3:24:40 p. m.",
   "fuentes": {
     "cesiones": {
       "revisados": 12,
@@ -14,8 +14,8 @@
       "coincidencias": 13
     },
     "Constructora Bolívar": {
-      "revisados": 4,
-      "coincidencias": 1
+      "revisados": 2,
+      "coincidencias": 0
     },
     "Marval": {
       "revisados": 16,
@@ -26,8 +26,8 @@
       "coincidencias": 3
     },
     "Cusezar": {
-      "revisados": 26,
-      "coincidencias": 5
+      "revisados": 0,
+      "coincidencias": 0
     },
     "Artis Urbano": {
       "revisados": 5,
@@ -252,22 +252,6 @@
       "detectado": "2026-11-22"
     },
     {
-      "id": "auto-constructora-bolivar-trifonte-tres-quebradas",
-      "tipo": "nuevo",
-      "nombre": "Trifonte - Tres Quebradas",
-      "constructora": "Constructora Bolívar",
-      "zona": "Bogotá – Sur Oriente",
-      "direccion": "",
-      "area": 47,
-      "precio": 204020000,
-      "fechaPub": "2026-11-22",
-      "fuente": "Constructora Bolívar (robot)",
-      "url": "https://www.constructorabolivar.com/proyectos-vivienda/bogota/trifonte-tres-quebradas",
-      "subsidios": "Proyecto VIS/VIP: confirmar subsidio distrital y caja",
-      "nota": "VIS. Desde 47 m² y $204.020.000.",
-      "detectado": "2026-11-22"
-    },
-    {
       "id": "auto-marval-ciudad-la-salle-giverny",
       "tipo": "nuevo",
       "nombre": "Ciudad La Salle Giverny",
@@ -332,6 +316,39 @@
       "detectado": "2026-11-22"
     },
     {
+      "id": "auto-artis-urbano-arbore",
+      "tipo": "nuevo",
+      "nombre": "Arboré",
+      "constructora": "Artis Urbano",
+      "zona": "Bogotá",
+      "direccion": "",
+      "area": 42.02,
+      "precio": 245000000,
+      "fechaPub": "2026-11-22",
+      "fuente": "Artis Urbano (robot)",
+      "url": "https://www.artisurbano.com/proyectos/ver/2/arbore",
+      "subsidios": "Proyecto VIS/VIP: confirmar subsidio distrital y caja",
+      "nota": "VIS. Desde 42.02 m² y $245.000.000.",
+      "detectado": "2026-11-22"
+    },
+    {
+      "id": "auto-constructora-bolivar-trifonte-tres-quebradas",
+      "tipo": "nuevo",
+      "nombre": "Trifonte - Tres Quebradas",
+      "constructora": "Constructora Bolívar",
+      "zona": "Bogotá – Sur Oriente",
+      "direccion": "",
+      "area": 47,
+      "precio": 204020000,
+      "fechaPub": "2026-11-22",
+      "fuente": "Constructora Bolívar (robot)",
+      "url": "https://www.constructorabolivar.com/proyectos-vivienda/bogota/trifonte-tres-quebradas",
+      "subsidios": "Proyecto VIS/VIP: confirmar subsidio distrital y caja",
+      "nota": "VIS. Desde 47 m² y $204.020.000.",
+      "detectado": "2026-11-22",
+      "vigente": false
+    },
+    {
       "id": "auto-cusezar-la-union-i",
       "tipo": "nuevo",
       "nombre": "Union Bosa",
@@ -345,7 +362,8 @@
       "url": "https://cusezar.com/proyectos/con-subsidio/la-union-i",
       "subsidios": "Proyecto VIS/VIP: confirmar subsidio distrital y caja",
       "nota": "VIS. Desde 48 m² y $231.700.000.",
-      "detectado": "2026-11-22"
+      "detectado": "2026-11-22",
+      "vigente": false
     },
     {
       "id": "auto-cusezar-la-gratitud-i",
@@ -361,7 +379,8 @@
       "url": "https://cusezar.com/proyectos/con-subsidio/la-gratitud-i",
       "subsidios": "Proyecto VIS/VIP: confirmar subsidio distrital y caja",
       "nota": "VIS. Desde 44 m² y $231.000.000.",
-      "detectado": "2026-11-22"
+      "detectado": "2026-11-22",
+      "vigente": false
     },
     {
       "id": "auto-cusezar-la-union-ii",
@@ -377,7 +396,8 @@
       "url": "https://cusezar.com/proyectos/con-subsidio/la-union-ii",
       "subsidios": "Proyecto VIS/VIP: confirmar subsidio distrital y caja",
       "nota": "VIS. Desde 41 m² y $211.400.000.",
-      "detectado": "2026-11-22"
+      "detectado": "2026-11-22",
+      "vigente": false
     },
     {
       "id": "auto-cusezar-la-gratitud-iv",
@@ -393,7 +413,8 @@
       "url": "https://cusezar.com/proyectos/con-subsidio/la-gratitud-iv",
       "subsidios": "Proyecto VIS/VIP: confirmar subsidio distrital y caja",
       "nota": "VIS. Desde 44 m² y $231.000.000.",
-      "detectado": "2026-11-22"
+      "detectado": "2026-11-22",
+      "vigente": false
     },
     {
       "id": "auto-cusezar-la-gratitud-ii",
@@ -409,23 +430,8 @@
       "url": "https://cusezar.com/proyectos/con-subsidio/la-gratitud-ii",
       "subsidios": "Proyecto VIS/VIP: confirmar subsidio distrital y caja",
       "nota": "VIS. Desde 41 m² y $215.300.000.",
-      "detectado": "2026-11-22"
-    },
-    {
-      "id": "auto-artis-urbano-arbore",
-      "tipo": "nuevo",
-      "nombre": "Arboré",
-      "constructora": "Artis Urbano",
-      "zona": "Bogotá",
-      "direccion": "",
-      "area": 42.02,
-      "precio": 245000000,
-      "fechaPub": "2026-11-22",
-      "fuente": "Artis Urbano (robot)",
-      "url": "https://www.artisurbano.com/proyectos/ver/2/arbore",
-      "subsidios": "Proyecto VIS/VIP: confirmar subsidio distrital y caja",
-      "nota": "VIS. Desde 42.02 m² y $245.000.000.",
-      "detectado": "2026-11-22"
+      "detectado": "2026-11-22",
+      "vigente": false
     }
   ]
 }
