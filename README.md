@@ -39,7 +39,7 @@ Tope VIS 2026: 150 SMMLV ≈ $262,6 millones (SMMLV 2026 ≈ $1.750.905). El tec
 
 La búsqueda de nuevo y usado es prioritaria, así que la hace un **robot gratuito de GitHub Actions**, no Claude. Por eso no consume el plan.
 
-- **Qué revisa:** cesiones en tucesion.com y apartamentos nuevos y usados de Bogotá en Tu360 Bancolombia.
+- **Qué revisa:** cesiones en tucesion.com; apartamentos nuevos y usados de Bogotá en Tu360 Bancolombia; y los proyectos en Bogotá de las páginas de Constructora Bolívar y Marval. Amarilo, Constructora Capital, Cusezar y Prodesa no se dejan leer por un robot (protección anti-robots o páginas que cargan de otra forma); muchos de sus proyectos igual aparecen en Tu360.
 - **Cada cuánto:** cada 2 horas (12 veces al día), a la 1:17, 3:17, 5:17, 7:17, 9:17 y 11:17, a. m. y p. m., hora de Bogotá. También se puede correr a mano desde la pestaña **Actions → Búsqueda automática de apartamento → Run workflow**.
 - **Filtros:** nuevo hasta 260 M; cesión con costo total hasta 260 M; usado de 100 a 220 M en el norte, nororiente o noroccidente; todo entre 37 y 50 m².
 - **Resultados:** `NOVEDADES.md` (para leer) y `data/novedades.json` (para el tablero). `data/vistos.json` guarda el día en que el robot vio cada anuncio por primera vez; si el sitio no publica la fecha, ese día se usa como fecha de publicación.

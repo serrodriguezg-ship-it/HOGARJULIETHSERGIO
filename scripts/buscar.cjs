@@ -37,11 +37,14 @@ const enArea = a => a != null && a >= CRITERIOS.area[0] && a <= CRITERIOS.area[1
 // Solo se cargan los recursos de los sitios revisados: la publicidad y las estadísticas
 // mantienen la página "ocupada" y hacían que el robot se quedara esperando.
 const PERMITIDOS = /(^|\.)(tucesion\.com|inmobiliariotu360\.bancolombia\.com|mkpinmobiliarioco\.vtexassets\.com|mkpinmobiliarioco\.vteximg\.com\.br)$/;
+const RASTREADORES = /google-analytics|googletagmanager|doubleclick|facebook\.(net|com)|hotjar|clarity\.ms|tiktok|segment\.io|hubspot|medallia|dynamicyield/i;
+let modoEstricto = true; // estricto en Tu360 y tucesion; en constructoras solo se bloquean rastreadores
 async function prepararPagina(page) {
   await page.route("**/*", route => {
     let host = ""; try { host = new URL(route.request().url()).hostname; } catch {}
     const tipo = route.request().resourceType();
-    if (!PERMITIDOS.test(host) || tipo === "media" || tipo === "font") return route.abort();
+    if (tipo === "media" || tipo === "font" || RASTREADORES.test(host)) return route.abort();
+    if (modoEstricto && !PERMITIDOS.test(host)) return route.abort();
     return route.continue();
   });
 }
@@ -165,6 +168,59 @@ async function buscarTu360(page, estado) {
   return { revisados: vistos.size, items };
 }
 
+/* ---------- Constructoras ---------- */
+const CONSTRUCTORAS = [
+  { nombre: "Constructora Bolívar", listas: ["https://www.constructorabolivar.com/proyectos-vivienda", "https://www.constructorabolivar.com/proyectos-vivienda/bogota"],
+    patron: /^https:\/\/www\.constructorabolivar\.com\/proyectos-vivienda\/bogota\/[a-z0-9-]+\/?$/i, bogotaEnUrl: true },
+  { nombre: "Marval", listas: ["https://marval.com.co/", "https://marval.com.co/mega-proyectos", "https://proyectos.marval.com.co/"],
+    patron: /^https:\/\/proyectos\.marval\.com\.co\/[a-z0-9-]+\/?$/i, bogotaEnUrl: false }
+];
+const PRECIO_RE = /\$\s?(\d{2,3}(?:[.,]\d{3}){2})/;
+const AREA_RE = /(\d{2,3}(?:[.,]\d{1,2})?)\s?(?:m2|m²|mt2)/i;
+async function buscarConstructora(page, c) {
+  modoEstricto = false;
+  const enlaces = new Set();
+  for (const url of c.listas) {
+    try {
+      await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60000 });
+      await page.waitForTimeout(5000);
+      for (let ronda = 0; ronda < 4; ronda++) {
+        await desplazar(page, 5);
+        const mas = page.locator('button:has-text("Ver más"), button:has-text("Cargar más"), a:has-text("Ver más proyectos")').first();
+        if (await mas.count()) { try { await mas.click({ timeout: 4000 }); await page.waitForTimeout(2500); } catch { break; } } else break;
+      }
+      const hrefs = await page.evaluate(() => [...document.querySelectorAll("a[href]")].map(a => a.href.split(/[?#]/)[0]));
+      hrefs.filter(h => c.patron.test(h)).forEach(h => enlaces.add(h.replace(/\/$/, "")));
+    } catch { /* la lista no cargó */ }
+  }
+  const items = [];
+  for (const url of [...enlaces].slice(0, 40)) {
+    try {
+      await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60000 });
+      await page.waitForFunction(() => /\$\s?\d{2,3}[.,]\d{3}[.,]\d{3}/.test(document.body.innerText), null, { timeout: 15000 }).catch(() => {});
+      const { txt, h1 } = await page.evaluate(() => ({ txt: document.body.innerText, h1: (document.querySelector("h1") || {}).innerText || document.title }));
+      if (!c.bogotaEnUrl && !/bogot/i.test(txt)) continue;
+      if (/^\s*(vendido|agotado)\b/im.test(txt.slice(0, 1500))) continue;
+      const precio = num((txt.match(PRECIO_RE) || [])[1]);
+      const area = Number(((txt.match(AREA_RE) || [])[1] || "").replace(",", ".")) || null;
+      if (!precio || precio > CRITERIOS.nuevo.max || (area && area > CRITERIOS.area[1])) continue;
+      const frase = (txt.match(/ubicad[oa] en (?:la |el )?([^.\n]{5,120})/i) || [])[1] || "";
+      const dir = (frase.match(/(?:avenida |av\.? )?(?:calle|carrera|cra|kr|cl|diagonal|transversal|ak|ac)\.?\s*\d+[^,\n]{0,40}?#\s*\d+\s*[-–]?\s*\d*(?:\s*(?:sur|este))?/i) || [])[0];
+      const sector = (txt.match(/Bogot[aá][^\n/]{0,40}\/\s*([A-Za-zÁÉÍÓÚáéíóúñ ]{3,25})/) || [])[1];
+      const vis = /\bVIS\b|\bVIP\b|inter[eé]s social/i.test(txt);
+      const nombre = String(h1).replace(/\s+/g, " ").trim().slice(0, 80);
+      if (/^macroproyecto/i.test(nombre)) continue; // la ficha general repite los proyectos que contiene
+      items.push({ id: "auto-" + slug(c.nombre.replace(/\s+/g, "-") + "-" + url.split("/").pop() + "/x"), tipo: "nuevo", nombre,
+        constructora: c.nombre, zona: sector ? `Bogotá – ${sector.trim()}` : "Bogotá", direccion: dir ? dir.replace(/\s+/g, " ").trim() : "",
+        area, precio, fechaPub: "", fuente: `${c.nombre} (robot)`, url,
+        subsidios: vis ? "Proyecto VIS/VIP: confirmar subsidio distrital y caja" : (precio <= 262.6e6 ? "Precio en rango VIS: confirmar" : ""),
+        nota: `${vis ? "VIS. " : ""}Desde ${area ? area + " m² y " : ""}$${precio.toLocaleString("es-CO")}.` });
+    } catch { /* ficha sin cargar */ }
+  }
+  modoEstricto = true;
+  return { revisados: enlaces.size, items };
+}
+
 /* ---------- Principal ---------- */
 (async () => {
   fs.mkdirSync(DATA, { recursive: true });
@@ -175,7 +231,9 @@ async function buscarTu360(page, estado) {
   await prepararPagina(page);
   const fuentes = {};
   const resultados = [];
-  for (const [nombre, fn] of [["cesiones", () => buscarCesiones(page)], ["usados", () => buscarTu360(page, "usado")], ["nuevos", () => buscarTu360(page, "nuevo")]]) {
+  const tareas = [["cesiones", () => buscarCesiones(page)], ["usados", () => buscarTu360(page, "usado")], ["nuevos", () => buscarTu360(page, "nuevo")],
+    ...CONSTRUCTORAS.map(c => [c.nombre, () => buscarConstructora(page, c)])];
+  for (const [nombre, fn] of tareas) {
     try { const r = await fn(); fuentes[nombre] = { revisados: r.revisados, coincidencias: r.items.length }; resultados.push(...r.items); }
     catch (e) { fuentes[nombre] = { error: String(e.message || e).split("\n")[0].replace(/\|/g, "/").slice(0, 160) }; }
   }
