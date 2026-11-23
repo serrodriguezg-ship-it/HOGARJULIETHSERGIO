@@ -46,6 +46,21 @@ La búsqueda de nuevo y usado es prioritaria, así que la hace un **robot gratui
 - **Aviso:** cuando hay algo nuevo, el robot abre un *issue* en GitHub, que llega por correo y a la app de GitHub.
 - **Pasarlo al tablero:** copien `data/novedades.json` y péguenlo en el recuadro **Novedades del robot** del tablero. Las opciones que ya aceptaron o descartaron no se tocan.
 
+### Novedades al tablero, solas (sin tokens)
+
+1. El robot de GitHub deja sus resultados en `data/novedades.json` cada 2 horas.
+2. Un script gratuito de Google, `scripts/sincronizar-drive.gs`, que corre en los servidores de Google, copia cada hora ese archivo a la carpeta de Drive **HOGAR JULIETH Y SERGIO** con el nombre `novedades-robot.json`.
+3. Al abrir el tablero de Sarita, la página lee ese archivo con el conector de **Google Drive** de su cuenta de Claude y agrega a "Por revisar" solo las opciones nuevas. Lo que ya aceptaron, descartaron o mandaron a la papelera no se toca. El botón **"Traer novedades ahora"** hace lo mismo a mano.
+
+**Instalar el script de Google (una sola vez):**
+
+1. Abran https://script.google.com con su cuenta de Google y toquen **Nuevo proyecto**.
+2. Borren lo que aparece, peguen todo el contenido de `scripts/sincronizar-drive.gs` y guarden.
+3. **Solo si el repositorio de GitHub es privado:** vayan a ⚙️ **Configuración del proyecto → Propiedades de la secuencia de comandos** y agreguen la propiedad `GITHUB_TOKEN` con un token de GitHub de solo lectura (Fine-grained token, permiso "Contents: Read-only" sobre este repositorio).
+4. Arriba elijan la función **instalar** y toquen **Ejecutar**. Acepten los permisos que pide Google. Desde ahí queda programado cada hora.
+
+La primera vez que abran el tablero después de esto, claude.ai les pedirá permiso para que la página use Google Drive. Acepten una sola vez.
+
 **Importante:** GitHub solo corre las tareas programadas desde la rama principal (`main`). Hay que unir esta rama a `main` para que el robot arranque.
 
 Solo gastan tokens el chat con Sarita y las búsquedas que se le pidan directamente a Claude. Se recomienda pedirle a Claude, una vez al mes, revisar proyectos de constructoras que no estén en Tu360.

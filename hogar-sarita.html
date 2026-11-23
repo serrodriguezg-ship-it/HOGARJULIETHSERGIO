@@ -263,6 +263,9 @@ details.add summary{cursor:pointer;padding:10px 14px;font-weight:800;font-family
 .robot-links{display:flex;gap:8px;flex-wrap:wrap}
 .robot-links a{background:var(--honey-soft);color:var(--fg);text-decoration:none;font-weight:800;font-size:.84rem;padding:5px 12px;border-radius:999px}
 .robot-links a:hover{background:var(--surface-2)}
+.sync-box{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--bg)}
+.sync-box>div{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1 1 200px}
+.sync-box .ok{color:var(--ok)} .sync-box .err{color:var(--bad)}
 .robot-form{display:flex;flex-direction:column;gap:6px}
 .robot-form textarea{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:8px;font-size:.82rem;font-family:ui-monospace,Menlo,monospace;min-width:0;width:100%;resize:vertical}
 .robot-form .row-end{display:flex;gap:8px;justify-content:flex-end;align-items:center}
@@ -537,13 +540,17 @@ body{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
           <h2 id="hRobot">Novedades del robot</h2>
           <p class="muted small">Un robot gratuito de GitHub revisa <b>cada 2 horas</b> tucesion.com, Tu360 (nuevos y usados) y las páginas de las constructoras Bolívar, Marval, Ingeurbe, Cusezar y Artis Urbano, sin gastar tokens de Claude. Cuando encuentra algo nuevo, abre un aviso en GitHub que les llega al correo y al celular.</p>
         </div>
+        <div class="sync-box" id="syncBox">
+          <div><b>Sincronización automática</b><span class="small muted" id="syncStatus">Al abrir el tablero, Sarita trae las novedades del robot desde su Google Drive.</span></div>
+          <button type="button" class="btn-main" id="syncBtn">Traer novedades ahora</button>
+        </div>
         <div class="robot-links">
           <a href="https://github.com/serrodriguezg-ship-it/HOGARJULIETHSERGIO/blob/main/NOVEDADES.md" target="_blank" rel="noopener">Ver novedades</a>
           <a href="https://github.com/serrodriguezg-ship-it/HOGARJULIETHSERGIO/blob/main/data/novedades.json" target="_blank" rel="noopener">Abrir novedades.json</a>
           <a href="https://github.com/serrodriguezg-ship-it/HOGARJULIETHSERGIO/actions" target="_blank" rel="noopener">Buscar ahora</a>
         </div>
         <form id="robotForm" class="robot-form">
-          <label for="robotIn" class="small muted">Peguen aquí el contenido de <b>novedades.json</b> y Sarita lo pasa a la lista (las que ya decidieron no se tocan):</label>
+          <label for="robotIn" class="small muted">Plan B, si la sincronización falla: peguen aquí el contenido de <b>novedades.json</b> (las que ya decidieron no se tocan):</label>
           <textarea id="robotIn" rows="3" placeholder='{"actualizado": "…", "items": [ … ]}'></textarea>
           <div class="row-end"><span class="status" id="robotStatus"></span><button class="btn-main" type="submit">Pasar al tablero</button></div>
         </form>
@@ -576,7 +583,7 @@ body{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
         <h2 id="hPlan">Plan de búsqueda</h2>
         <ol class="plan">
           <li><b>Nuevos, cesiones y usados (prioridad):</b> el robot de GitHub busca cada 2 horas, 12 veces al día, en tucesion.com, Tu360 y las constructoras Bolívar, Marval, Ingeurbe, Cusezar y Artis Urbano, sin gastar tokens.</li>
-          <li><b>Pasar novedades al tablero:</b> cuando llegue un aviso, peguen <i>novedades.json</i> en “Novedades del robot”. Tampoco gasta tokens.</li>
+          <li><b>Novedades al tablero, solas:</b> un script gratuito de Google copia cada hora los resultados del robot a su Drive, y el tablero los trae al abrirlo. Tampoco gasta tokens.</li>
           <li><b>Constructoras que el robot no puede leer</b> (Amarilo, Constructora Capital, Prodesa, Urbansa, Las Galias, Buen Vivir y otras): pídanle a Claude una revisión al mes, y antes de Expovivienda u Oferta Preferente.</li>
           <li><b>Subsidios:</b> revisar topes cada enero, cuando cambia el salario mínimo.</li>
         </ol>
@@ -1103,31 +1110,91 @@ $("#logForm").addEventListener("submit", async e => {
 });
 
 /* ---------- Novedades del robot (sin tokens) ---------- */
+const CAMPOS_ROBOT = ["tipo","nombre","constructora","zona","direccion","area","precio","fechaPub","fuente","url","subsidios","nota"];
+async function importarNovedades(data, origen){
+  const lista = Array.isArray(data) ? data : ((data && data.items) || []);
+  const ids = new Set(items.map(x => x.id)), urls = new Set(items.map(x => x.url).filter(Boolean));
+  let nuevas = 0;
+  for (const it of lista){
+    if (!it || !it.id || !/^[\w.~:@+-]{1,200}$/.test(it.id) || !["nuevo","usado","cesion"].includes(it.tipo)) continue;
+    if (ids.has(it.id) || (it.url && urls.has(it.url))) continue; // ya está (aunque esté en la papelera o descartado)
+    const doc = {estado:"pendiente", creado:new Date().toISOString()};
+    CAMPOS_ROBOT.forEach(k => { const v = it[k]; doc[k] = (typeof v === "number" || v === null) ? v : String(v ?? "").slice(0, 600); });
+    if (!/^https?:\/\//.test(doc.url)) doc.url = "";
+    try { await db.collection("inmuebles").doc(it.id).set(doc); nuevas++; ids.add(it.id); if (doc.url) urls.add(doc.url); } catch(err){}
+  }
+  if (nuevas || origen === "pegado"){
+    try { await db.collection("busquedas").add({fecha:todayISO(), tipo:"nuevo", fuente:`Robot de GitHub (${origen === "drive" ? "sincronizado desde Drive" : "pegado a mano"})`,
+      criterios:"Nuevo hasta 260 M, usado 100–220 M en el norte, 37–50 m²", resultados:nuevas,
+      nota:`Revisión del robot del ${String((data && data.actualizado) || "").slice(0,40)}: ${lista.length} coincidencias, ${nuevas} nuevas en el tablero.`, creado:new Date().toISOString()}); } catch(err){}
+  }
+  return {nuevas, total:lista.length};
+}
 $("#robotForm").addEventListener("submit", async e => {
   e.preventDefault();
   const st = $("#robotStatus");
   if (!db){ st.textContent = "Abre la página con tu cuenta de Claude para guardar."; return; }
   let data;
   try { data = JSON.parse($("#robotIn").value); } catch(err){ st.textContent = "Eso no parece el contenido de novedades.json. Copien el archivo completo."; return; }
-  const lista = Array.isArray(data) ? data : (data.items || []);
-  const ids = new Set(items.map(x => x.id)), urls = new Set(items.map(x => x.url).filter(Boolean));
-  const CAMPOS = ["tipo","nombre","constructora","zona","direccion","area","precio","fechaPub","fuente","url","subsidios","nota"];
-  let nuevas = 0;
   st.textContent = "Pasando…";
-  for (const it of lista){
-    if (!it || !it.id || !/^[\w.~:@+-]{1,200}$/.test(it.id) || !["nuevo","usado","cesion"].includes(it.tipo)) continue;
-    if (ids.has(it.id) || (it.url && urls.has(it.url))) continue;
-    const doc = {estado:"pendiente", creado:new Date().toISOString()};
-    CAMPOS.forEach(k => { const v = it[k]; doc[k] = (typeof v === "number" || v === null) ? v : String(v ?? "").slice(0, 600); });
-    if (!/^https?:\/\//.test(doc.url)) doc.url = "";
-    try { await db.collection("inmuebles").doc(it.id).set(doc); nuevas++; ids.add(it.id); } catch(err){}
-  }
-  try { await db.collection("busquedas").add({fecha:todayISO(), tipo:"nuevo", fuente:"Robot de GitHub (tucesion.com, Tu360 y constructoras)", criterios:"Nuevo hasta 260 M, usado 100–220 M en el norte, 37–50 m²",
-    resultados:nuevas, nota:`Novedades del ${String(data.actualizado || "").slice(0,40)}: ${lista.length} coincidencias, ${nuevas} nuevas en el tablero.`, creado:new Date().toISOString()}); } catch(err){}
+  const r = await importarNovedades(data, "pegado");
   $("#robotIn").value = "";
-  st.textContent = nuevas ? `Listo: ${nuevas} nuevas en “Por revisar”.` : "No había nada nuevo: ya estaban todas en el tablero.";
-  say(nuevas ? `¡Mami Julieth, papi Sergio! El robot trajo ${nuevas} opciones nuevas. Ustedes deciden cuáles aceptar.` : "Mami Julieth, papi Sergio: todo eso ya lo teníamos anotado.");
+  st.textContent = r.nuevas ? `Listo: ${r.nuevas} nuevas en “Por revisar”.` : "No había nada nuevo: ya estaban todas en el tablero.";
+  say(r.nuevas ? `¡Mami Julieth, papi Sergio! El robot trajo ${r.nuevas} opciones nuevas. Ustedes deciden cuáles aceptar.` : "Mami Julieth, papi Sergio: todo eso ya lo teníamos anotado.");
 });
+
+// Sincronización automática: el robot de GitHub deja sus resultados en Drive (novedades-robot.json)
+// y el tablero los lee con el conector de Google Drive de quien lo abre. No usa Claude.
+const DRIVE = "Google Drive", ARCHIVO_ROBOT = "novedades-robot.json";
+let mcp = null, sincronizando = false;
+function syncMsg(txt, tipo){ const el = $("#syncStatus"); el.textContent = txt; el.className = "small " + (tipo || "muted"); }
+function textoDeResultado(r){
+  const p = r && r.payload;
+  if (p && typeof p === "object" && typeof p.fileContent === "string" && /"items"\s*:/.test(p.fileContent)) return p.fileContent;
+  for (const b of (r && r.content) || []){
+    const res = b && b.resource;
+    if (res && typeof res.text === "string" && res.text.trim()) return res.text;
+    if (res && typeof res.blob === "string"){ try { return new TextDecoder("utf-8").decode(Uint8Array.from(atob(res.blob), c => c.charCodeAt(0))); } catch(e){} }
+    if (b && b.type === "text" && /^\s*[{[]/.test(b.text || "") && /"items"\s*:/.test(b.text)) return b.text;
+  }
+  if (p && typeof p === "object" && Array.isArray(p.items)) return JSON.stringify(p);
+  return "";
+}
+const MSG_MCP = {
+  server_not_connected: "Google Drive no está conectado a su cuenta de Claude. Conéctenlo en claude.ai (Configuración → Conectores) y vuelvan a intentar.",
+  needs_reauth: "Hay que volver a conectar Google Drive en claude.ai (Configuración → Conectores).",
+  approval_required: "Sarita necesita su permiso para leer Google Drive. Toquen “Traer novedades ahora” y acepten.",
+  consent_required: "Sarita necesita su permiso para leer Google Drive. Toquen “Traer novedades ahora” y acepten.",
+  not_granted: "El acceso a Google Drive está bloqueado para este tablero. Pueden activarlo en los permisos del artefacto.",
+  blocked_by_policy: "Su cuenta no permite que el tablero use Google Drive. Usen el Plan B de abajo.",
+  not_in_manifest: "Este tablero no tiene permiso para esa herramienta de Drive.",
+  selection_required: "Elijan cuál cuenta de Google Drive usar cuando claude.ai lo pregunte."
+};
+async function sincronizarDrive(manual){
+  if (sincronizando) return; sincronizando = true;
+  try {
+    if (!db){ syncMsg("Abran el tablero con su cuenta de Claude para sincronizar.", "err"); return; }
+    if (!mcp) mcp = await claude.use("mcp").catch(() => null);
+    if (!mcp){ syncMsg("Aquí no se puede usar el conector de Google Drive. Usen el Plan B de abajo.", "err"); return; }
+    syncMsg("Buscando las novedades del robot en Drive…");
+    const busq = await mcp.callTool(DRIVE, "search_files", {query:`title = '${ARCHIVO_ROBOT}' and trashed = false`, excludeContentSnippets:true, orderBy:"modifiedTime desc", pageSize:1}, {cache:false});
+    const f = busq && busq.payload && Array.isArray(busq.payload.files) ? busq.payload.files[0] : null;
+    if (!f || !f.id){ syncMsg(`No encontré “${ARCHIVO_ROBOT}” en su Drive. Falta instalar el sincronizador de Google (ver README).`, "err"); return; }
+    let texto = "";
+    try { texto = textoDeResultado(await mcp.callTool(DRIVE, "read_file_content", {fileId:f.id}, {cache:false})); } catch(e){}
+    if (!texto) texto = textoDeResultado(await mcp.callTool(DRIVE, "download_file_content", {fileId:f.id}, {cache:false}));
+    let data; try { data = JSON.parse(texto); } catch(e){ syncMsg("El archivo de Drive no se pudo leer como novedades del robot.", "err"); return; }
+    const r = await importarNovedades(data, "drive");
+    const cuando = f.modifiedTime ? new Date(f.modifiedTime).toLocaleString("es-CO", {timeZone:TZ, dateStyle:"medium", timeStyle:"short"}) : "";
+    syncMsg(`${r.nuevas ? `Llegaron ${r.nuevas} nuevas a “Por revisar”.` : "Todo al día: no hay opciones nuevas."} Revisión del robot: ${data.actualizado || "—"}${cuando ? ` · copiado a Drive: ${cuando}` : ""}`, "ok");
+    if (r.nuevas) say(`¡Mami Julieth, papi Sergio! El robot trajo ${r.nuevas} opciones nuevas. Ustedes deciden cuáles aceptar.`, 9000);
+    else if (manual) say("Mami Julieth, papi Sergio: ya teníamos todo lo que encontró el robot.");
+  } catch(err){
+    const code = err && err.code;
+    syncMsg(MSG_MCP[code] || (code === "tool_error" ? "Google Drive respondió con un error: " + String(err.message || "").slice(0,140) : "No pude conectar con Google Drive en este momento. Intenten de nuevo en un rato."), "err");
+  } finally { sincronizando = false; }
+}
+$("#syncBtn").addEventListener("click", () => sincronizarDrive(true));
 
 /* ---------- Chat with Sarita ---------- */
 let sample = null, history = [];
@@ -1141,7 +1208,7 @@ function context(){
 Reglas obligatorias: (1) Empieza SIEMPRE cada respuesta saludando primero a tu mamá y después a tu papá, en ese orden, por ejemplo "¡Hola, mami Julieth! ¡Hola, papi Sergio!". (2) Dirígete siempre a los dos juntos ("mami y papi", "ustedes"). (3) Toda decisión es de mami Julieth y papi Sergio: tú solo sugieres; termina recordando que ellos dos deciden juntos (por ejemplo "¿Qué deciden, mami y papi?"). Nunca decidas por ellos.
 Criterios de la familia: Nuevo VIS en Bogotá: presupuesto 210–260 millones COP, 37–50 m², que acepte subsidios (Mi Casa en Bogotá / Oferta Preferente de la Secretaría Distrital del Hábitat, caja de compensación, Mi Casa Ya si aplica, concurrencia de subsidios). Cesiones en tucesion.com también cuentan como nuevo. Usado: 100–220 millones COP, 37–50 m², en el norte, nororiente o noroccidente de Bogotá (Usaquén, Suba, Engativá, Chapinero norte, Barrios Unidos), buscando en Tu360 Bancolombia.
 Datos útiles: tope VIS 2026 = 150 SMMLV ≈ $262,6 millones. El subsidio distrital exige proyecto inscrito en la Secretaría del Hábitat. Los subsidios de vivienda nueva no aplican a usados (salvo programas específicos); para usado sirven cesantías, ahorro y crédito/leasing.
-Un robot gratuito de GitHub revisa tucesion.com, Tu360 y las constructoras Bolívar, Marval, Ingeurbe, Cusezar y Artis Urbano cada 2 horas sin gastar tokens; sus hallazgos llegan con fuente "(robot)". Recomienda pasar las novedades al tablero desde el recuadro "Novedades del robot".
+Un robot gratuito de GitHub revisa tucesion.com, Tu360 y las constructoras Bolívar, Marval, Ingeurbe, Cusezar y Artis Urbano cada 2 horas sin gastar tokens; sus hallazgos llegan con fuente "(robot)". Las novedades llegan solas al tablero desde Google Drive al abrirlo; si fallan, se pueden pegar a mano en "Novedades del robot".
 No inventes proyectos, precios ni enlaces: si no está en la lista, dilo y sugiere dónde verificar. Fecha de hoy en Bogotá: ${todayISO()}.
 Lista guardada por la familia (JSON): ${JSON.stringify(rows)}
 Bitácora reciente (JSON): ${JSON.stringify(lg)}`;
@@ -1187,7 +1254,9 @@ tick(); setInterval(tick, 1000); renderCal();
   try {
     db = await claude.use("db");
     if (!db){ clearTimeout(loadTimer); renderCards(); renderLog(); return; }
-    db.collection("inmuebles").onSnapshot(snap => { clearTimeout(loadTimer); items = snap.docs.map(d => ({id:d.id, ...d.data()})); renderCards(); renderCal(); },
+    let primeraCarga = true;
+    db.collection("inmuebles").onSnapshot(snap => { clearTimeout(loadTimer); items = snap.docs.map(d => ({id:d.id, ...d.data()})); renderCards(); renderCal();
+        if (primeraCarga){ primeraCarga = false; setTimeout(() => sincronizarDrive(false), 1500); } },
       () => { clearTimeout(loadTimer); renderCards(); });
     db.collection("busquedas").onSnapshot(snap => { logs = snap.docs.map(d => ({id:d.id, ...d.data()})); renderLog(); }, () => renderLog());
   } catch(err){ clearTimeout(loadTimer); renderCards(); renderLog(); }
