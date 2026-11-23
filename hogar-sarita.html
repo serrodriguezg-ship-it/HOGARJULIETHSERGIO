@@ -535,7 +535,7 @@ body{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
       <section class="panel robot-panel" aria-labelledby="hRobot">
         <div>
           <h2 id="hRobot">Novedades del robot</h2>
-          <p class="muted small">Un robot gratuito de GitHub revisa <b>cada 2 horas</b> tucesion.com, Tu360 (nuevos y usados) y las páginas de Constructora Bolívar y Marval, sin gastar tokens de Claude. Cuando encuentra algo nuevo, abre un aviso en GitHub que les llega al correo y al celular.</p>
+          <p class="muted small">Un robot gratuito de GitHub revisa <b>cada 2 horas</b> tucesion.com, Tu360 (nuevos y usados) y las páginas de las constructoras Bolívar, Marval, Ingeurbe, Cusezar y Artis Urbano, sin gastar tokens de Claude. Cuando encuentra algo nuevo, abre un aviso en GitHub que les llega al correo y al celular.</p>
         </div>
         <div class="robot-links">
           <a href="https://github.com/serrodriguezg-ship-it/HOGARJULIETHSERGIO/blob/main/NOVEDADES.md" target="_blank" rel="noopener">Ver novedades</a>
@@ -575,9 +575,9 @@ body{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
       <section class="panel" aria-labelledby="hPlan">
         <h2 id="hPlan">Plan de búsqueda</h2>
         <ol class="plan">
-          <li><b>Nuevos, cesiones y usados (prioridad):</b> el robot de GitHub busca cada 2 horas, 12 veces al día, en tucesion.com, Tu360, Constructora Bolívar y Marval, sin gastar tokens.</li>
+          <li><b>Nuevos, cesiones y usados (prioridad):</b> el robot de GitHub busca cada 2 horas, 12 veces al día, en tucesion.com, Tu360 y las constructoras Bolívar, Marval, Ingeurbe, Cusezar y Artis Urbano, sin gastar tokens.</li>
           <li><b>Pasar novedades al tablero:</b> cuando llegue un aviso, peguen <i>novedades.json</i> en “Novedades del robot”. Tampoco gasta tokens.</li>
-          <li><b>Constructoras que el robot no puede leer</b> (Amarilo, Constructora Capital, Cusezar, Prodesa y otras): pídanle a Claude una revisión al mes, y antes de Expovivienda u Oferta Preferente.</li>
+          <li><b>Constructoras que el robot no puede leer</b> (Amarilo, Constructora Capital, Prodesa, Urbansa, Las Galias, Buen Vivir y otras): pídanle a Claude una revisión al mes, y antes de Expovivienda u Oferta Preferente.</li>
           <li><b>Subsidios:</b> revisar topes cada enero, cuando cambia el salario mínimo.</li>
         </ol>
         <p class="muted small">Solo gastan tokens el chat con Sarita y las búsquedas que le pidan directamente a Claude.</p>
@@ -1141,7 +1141,7 @@ function context(){
 Reglas obligatorias: (1) Empieza SIEMPRE cada respuesta saludando primero a tu mamá y después a tu papá, en ese orden, por ejemplo "¡Hola, mami Julieth! ¡Hola, papi Sergio!". (2) Dirígete siempre a los dos juntos ("mami y papi", "ustedes"). (3) Toda decisión es de mami Julieth y papi Sergio: tú solo sugieres; termina recordando que ellos dos deciden juntos (por ejemplo "¿Qué deciden, mami y papi?"). Nunca decidas por ellos.
 Criterios de la familia: Nuevo VIS en Bogotá: presupuesto 210–260 millones COP, 37–50 m², que acepte subsidios (Mi Casa en Bogotá / Oferta Preferente de la Secretaría Distrital del Hábitat, caja de compensación, Mi Casa Ya si aplica, concurrencia de subsidios). Cesiones en tucesion.com también cuentan como nuevo. Usado: 100–220 millones COP, 37–50 m², en el norte, nororiente o noroccidente de Bogotá (Usaquén, Suba, Engativá, Chapinero norte, Barrios Unidos), buscando en Tu360 Bancolombia.
 Datos útiles: tope VIS 2026 = 150 SMMLV ≈ $262,6 millones. El subsidio distrital exige proyecto inscrito en la Secretaría del Hábitat. Los subsidios de vivienda nueva no aplican a usados (salvo programas específicos); para usado sirven cesantías, ahorro y crédito/leasing.
-Un robot gratuito de GitHub revisa tucesion.com, Tu360, Constructora Bolívar y Marval cada 2 horas sin gastar tokens; sus hallazgos llegan con fuente "(robot)". Recomienda pasar las novedades al tablero desde el recuadro "Novedades del robot".
+Un robot gratuito de GitHub revisa tucesion.com, Tu360 y las constructoras Bolívar, Marval, Ingeurbe, Cusezar y Artis Urbano cada 2 horas sin gastar tokens; sus hallazgos llegan con fuente "(robot)". Recomienda pasar las novedades al tablero desde el recuadro "Novedades del robot".
 No inventes proyectos, precios ni enlaces: si no está en la lista, dilo y sugiere dónde verificar. Fecha de hoy en Bogotá: ${todayISO()}.
 Lista guardada por la familia (JSON): ${JSON.stringify(rows)}
 Bitácora reciente (JSON): ${JSON.stringify(lg)}`;
