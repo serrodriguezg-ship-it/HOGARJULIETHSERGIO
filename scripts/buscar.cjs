@@ -34,9 +34,22 @@ const slug = u => { let x = u.split("/").slice(-2, -1)[0] || u; try { x = decode
   return x.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/^proyecto-de-vivienda-|^proyecto-/, "").replace(/[^a-z0-9-]/g, "").slice(-80); };
 const enArea = a => a != null && a >= CRITERIOS.area[0] && a <= CRITERIOS.area[1];
 
-async function cargar(page, url) {
-  await page.goto(url, { waitUntil: "networkidle", timeout: 90000 });
-  await page.waitForTimeout(2500);
+// Solo se cargan los recursos de los sitios revisados: la publicidad y las estadísticas
+// mantienen la página "ocupada" y hacían que el robot se quedara esperando.
+const PERMITIDOS = /(^|\.)(tucesion\.com|inmobiliariotu360\.bancolombia\.com|mkpinmobiliarioco\.vtexassets\.com|mkpinmobiliarioco\.vteximg\.com\.br)$/;
+async function prepararPagina(page) {
+  await page.route("**/*", route => {
+    let host = ""; try { host = new URL(route.request().url()).hostname; } catch {}
+    const tipo = route.request().resourceType();
+    if (!PERMITIDOS.test(host) || tipo === "media" || tipo === "font") return route.abort();
+    return route.continue();
+  });
+}
+async function cargar(page, url, selector) {
+  await page.goto(url, { waitUntil: "domcontentloaded", timeout: 90000 });
+  if (selector) await page.waitForSelector(selector, { timeout: 60000 }).catch(() => {});
+  await page.waitForLoadState("networkidle", { timeout: 15000 }).catch(() => {});
+  await page.waitForTimeout(2000);
 }
 async function desplazar(page, veces = 12) {
   for (let i = 0; i < veces; i++) { await page.mouse.wheel(0, 1800); await page.waitForTimeout(700); }
@@ -44,7 +57,7 @@ async function desplazar(page, veces = 12) {
 
 /* ---------- tucesion.com ---------- */
 async function buscarCesiones(page) {
-  await cargar(page, "https://tucesion.com/cessions");
+  await cargar(page, "https://tucesion.com/cessions", 'a[href*="/listings/CES-"]');
   await desplazar(page, 10);
   const tarjetas = await page.evaluate(() => {
     const out = new Map();
@@ -96,12 +109,12 @@ async function buscarCesiones(page) {
 /* ---------- Tu360 Bancolombia ---------- */
 async function buscarTu360(page, estado) {
   const url = `https://inmobiliariotu360.bancolombia.com/venta/apartamentos/bogota-d-c-/${estado}?map=category-1,category-2,ciudad,estado`;
-  await cargar(page, url);
+  await cargar(page, url, 'section[class*="product-summary"]');
   try { // ordenar por "Lo más nuevo"
     await page.locator('[class*="orderByButton"]').first().click({ timeout: 10000 });
     await page.waitForTimeout(600);
     await page.locator('[class*="orderByOptionItem"]', { hasText: "Lo más nuevo" }).first().click({ timeout: 10000 });
-    await page.waitForLoadState("networkidle"); await page.waitForTimeout(2500);
+    await page.waitForLoadState("networkidle", { timeout: 15000 }).catch(() => {}); await page.waitForTimeout(2500);
   } catch { /* si no se puede ordenar, se revisa el orden por defecto */ }
   const vistos = new Map();
   for (let ronda = 0; ronda < 8; ronda++) {
@@ -111,7 +124,7 @@ async function buscarTu360(page, estado) {
     })));
     lote.forEach(x => { if (x.url && !vistos.has(x.url)) vistos.set(x.url, x.texto); });
     const mas = page.locator('[class*="buttonShowMore"] button, button:has-text("Mostrar más resultados"), button:has-text("Ver más")').first();
-    if (await mas.count()) { try { await mas.click({ timeout: 5000 }); await page.waitForLoadState("networkidle"); } catch { break; } } else if (ronda > 1) break;
+    if (await mas.count()) { try { await mas.click({ timeout: 5000 }); await page.waitForLoadState("networkidle", { timeout: 15000 }).catch(() => {}); } catch { break; } } else if (ronda > 1) break;
   }
   const items = [];
   for (const [u, texto] of vistos) {
@@ -145,12 +158,14 @@ async function buscarTu360(page, estado) {
   fs.mkdirSync(DATA, { recursive: true });
   const vistosPrev = leer(path.join(DATA, "vistos.json"), {});
   const navegador = await chromium.launch();
-  const page = await navegador.newPage({ viewport: { width: 1366, height: 900 }, locale: "es-CO" });
+  const page = await navegador.newPage({ viewport: { width: 1366, height: 900 }, locale: "es-CO",
+    userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36" });
+  await prepararPagina(page);
   const fuentes = {};
   const resultados = [];
   for (const [nombre, fn] of [["cesiones", () => buscarCesiones(page)], ["usados", () => buscarTu360(page, "usado")], ["nuevos", () => buscarTu360(page, "nuevo")]]) {
     try { const r = await fn(); fuentes[nombre] = { revisados: r.revisados, coincidencias: r.items.length }; resultados.push(...r.items); }
-    catch (e) { fuentes[nombre] = { error: String(e.message || e).slice(0, 200) }; }
+    catch (e) { fuentes[nombre] = { error: String(e.message || e).split("\n")[0].replace(/\|/g, "/").slice(0, 160) }; }
   }
   await navegador.close();
 

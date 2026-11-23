@@ -62,6 +62,8 @@ Solo gastan tokens el chat con Sarita y las búsquedas que se le pidan directame
 - Hay un botón flotante para llamar a Sarita desde cualquier parte de la página.
 - El calendario es desplegable y señala la fecha de hoy.
 - Toda la página cambia de ambiente según la hora de Bogotá: madrugada, mañana, mediodía, tarde, noche y medianoche.
+- El reloj muestra la hora de Bogotá en formato de 12 horas, con a. m. y p. m.
+- **Papelera de apartamentos:** lo que se elimina en "Proyectos y apartamentos" va a la papelera. Desde allí se puede devolver (vuelve al mismo grupo en que estaba) o eliminar definitivamente con doble toque. También se puede vaciar toda la papelera. El robot no vuelve a traer lo que está en la papelera.
 
 ## Notas técnicas
 
