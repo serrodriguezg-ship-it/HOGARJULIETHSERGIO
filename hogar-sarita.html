@@ -749,7 +749,7 @@ $("#callBtn").addEventListener("click", () => {
   requestAnimationFrame(() => { s.style.left = "43%"; });
   const pend = items.filter(x => x.estado === "pendiente").length;
   const msg = SALUDOS[currentTod] + (pend ? ` Tenemos ${pend} opciones esperando su decisión.` : "");
-  say(msg, 8000); // sin voz: Sarita saluda por escrito en la escena y en el chat
+  $("#bubble").hidden = true; // sin voz ni burbuja en la escena: el saludo va solo al chat
   addMsg("sa", msg + " ¿En qué les ayudo?");
   mostrarChat();
   clearTimeout(callTimer);
