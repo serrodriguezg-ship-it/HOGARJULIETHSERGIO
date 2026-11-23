@@ -198,6 +198,26 @@ details.add summary{cursor:pointer;padding:10px 14px;font-weight:800;font-family
 .unplaced .chips{gap:6px}
 .unplaced button{border:1px dashed var(--line);background:var(--bg);border-radius:999px;padding:3px 10px;font-size:.8rem;font-weight:700}
 
+/* Reloj y calendario en el encabezado: misma altura y tipografía */
+.clock{align-items:stretch}
+.clock-face,.cal-chip{display:flex;flex-direction:column;justify-content:center;gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:8px 14px;min-height:76px}
+.clock-face .meta{flex-direction:row;align-items:center;gap:8px;font-size:.78rem}
+.cal-wrap{position:relative}
+.cal-chip{flex-direction:row;align-items:center;gap:10px;color:var(--fg);cursor:pointer;height:100%;text-align:left}
+.cal-chip:hover{background:var(--surface-2)}
+.cal-chip .cal-day{font-family:var(--f-display);font-size:2rem;font-weight:600;line-height:1;color:var(--honey);font-variant-numeric:tabular-nums;min-width:1.3em;text-align:center}
+.cal-chip .cal-my{display:flex;flex-direction:column;line-height:1.2}
+.cal-chip .cal-my b{font-family:var(--f-display);font-weight:600;font-size:1.05rem;text-transform:capitalize}
+.cal-chip .cal-my small{color:var(--muted);font-size:.78rem}
+.cal-chip .cal-caret{color:var(--muted);transition:transform .2s}
+.cal-chip[aria-expanded="true"] .cal-caret{transform:rotate(180deg)}
+.cal-pop{position:absolute;right:0;top:calc(100% + 8px);z-index:30;width:min(400px,calc(100vw - 32px));background:var(--surface);border:1px solid var(--line);border-radius:18px;
+  box-shadow:var(--shadow),0 18px 40px rgba(0,0,0,.25);padding:14px;display:flex;flex-direction:column;gap:10px}
+.cal-pop-h{display:flex;justify-content:space-between;align-items:center}
+.cal-close{border:1px solid var(--line);background:var(--bg);border-radius:8px;width:32px;height:32px;font-weight:800}
+.cal-pop .panel-h{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+.cal-pop .hol-list{max-height:140px;overflow:auto}
+
 /* Papelera */
 .trash-list{display:flex;flex-direction:column;gap:8px}
 .trash-item{display:flex;gap:10px;align-items:center;flex-wrap:wrap;border:1px solid var(--line);border-radius:12px;padding:8px 10px;background:var(--bg)}
@@ -275,7 +295,6 @@ details.add summary{cursor:pointer;padding:10px 14px;font-weight:800;font-family
 /* Calendario desplegable */
 .cal-panel>summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px}
 .cal-panel>summary::-webkit-details-marker{display:none}
-.cal-sum>span:first-child{display:flex;flex-direction:column;gap:2px}
 .cal-caret{font-size:1.2rem;transition:transform .2s;color:var(--muted)}
 .cal-panel[open] .cal-caret{transform:rotate(180deg)}
 .cal-panel:not([open]){gap:0}
@@ -298,14 +317,21 @@ body{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 @keyframes llamada{0%{box-shadow:0 0 0 0 rgba(232,138,160,.9)}70%{box-shadow:0 0 0 18px rgba(232,138,160,0)}100%{box-shadow:0 10px 32px rgba(194,86,107,.28)}}
 @media (min-width:1600px){.wrap{max-width:1440px} body{font-size:16px}}
 @media (max-width:760px){
-  .clock{width:100%;justify-content:space-between}
+  .clock{width:100%;justify-content:flex-start}
+  .clock-face,.cal-wrap{flex:1 1 0;min-width:0}
+  .cal-pop{left:auto;right:0}
   .clock #callBtn{display:none}            /* en celular y tableta queda el botón flotante */
 }
 @media (max-width:600px){
   body{font-size:15px}
   .wrap{gap:14px}
   .brand svg{width:42px;height:42px}
-  .clock .time{font-size:1.7rem}
+  .clock .time,.cal-chip .cal-day{font-size:1.6rem}
+  .clock-face,.cal-chip{min-height:68px;padding:8px 10px}
+  .clock-face .meta{flex-wrap:wrap;gap:4px}
+  .cal-chip{gap:8px}
+  .cal-chip .cal-my b{font-size:.95rem}
+  .cal-pop{position:fixed;left:16px;right:16px;top:auto;width:auto;margin-top:8px}
   .scene{aspect-ratio:4/3.2;min-height:0;border-radius:18px}
   .sarita{width:clamp(78px,24%,120px)}
   .scene-tag{display:none}
@@ -344,12 +370,36 @@ body{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
       </div>
     </div>
     <div class="clock">
-      <div>
+      <div class="clock-face">
         <div class="time" id="clockTime">--:--:--</div>
+        <div class="meta"><span>Hora de Bogotá</span><span class="tod-chip" id="todChip">…</span></div>
       </div>
-      <div class="meta">
-        <span id="clockDate">Bogotá</span>
-        <span><span class="tod-chip" id="todChip">…</span></span>
+      <div class="cal-wrap">
+        <button type="button" class="cal-chip" id="calChip" aria-expanded="false" aria-controls="calPop" title="Abrir el calendario">
+          <span class="cal-day" id="chipDay">--</span>
+          <span class="cal-my"><b id="chipMonth">mes</b><small id="chipWeek">día · año</small></span>
+          <span class="cal-caret" aria-hidden="true">▾</span>
+        </button>
+        <div class="cal-pop" id="calPop" role="dialog" aria-label="Calendario" hidden>
+          <div class="cal-pop-h"><h2 id="hCal">Calendario</h2><button type="button" class="cal-close" id="calClose" aria-label="Cerrar calendario">✕</button></div>
+        <div class="panel-h">
+          <span class="today-pill" id="todayPill">Hoy</span>
+          <div class="cal-ctrl">
+            <button type="button" id="calPrev" aria-label="Mes anterior">‹</button>
+            <select id="calMonth" aria-label="Mes"></select>
+            <select id="calYear" aria-label="Año"></select>
+            <button type="button" id="calNext" aria-label="Mes siguiente">›</button>
+            <button type="button" id="calToday" style="width:auto;padding:0 10px">Hoy</button>
+          </div>
+        </div>
+        <div class="cal" id="cal"></div>
+        <div class="legend">
+          <span style="--c:var(--rose-soft)">Festivo</span>
+          <span style="--c:var(--santa-soft)">Semana Santa</span>
+          <span style="--c:var(--leaf)">Publicación registrada</span>
+        </div>
+        <ul class="hol-list" id="holList"></ul>
+        </div>
       </div>
       <button class="btn-sarita" id="callBtn" type="button">
         <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 14l2-8 4 5 2-7 2 7 4-5 2 8z" fill="#ffe08a" stroke="#fff" stroke-width="1.2" stroke-linejoin="round"/><rect x="4" y="15" width="16" height="3" rx="1" fill="#ffe08a"/></svg>
@@ -485,7 +535,7 @@ body{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
       <section class="panel robot-panel" aria-labelledby="hRobot">
         <div>
           <h2 id="hRobot">Novedades del robot</h2>
-          <p class="muted small">Un robot gratuito de GitHub revisa tucesion.com y Tu360 (nuevos y usados) <b>cada 2 horas</b>, sin gastar tokens de Claude. Cuando encuentra algo nuevo, abre un aviso en GitHub que les llega al correo y al celular.</p>
+          <p class="muted small">Un robot gratuito de GitHub revisa <b>cada 2 horas</b> tucesion.com, Tu360 (nuevos y usados) y las páginas de Constructora Bolívar y Marval, sin gastar tokens de Claude. Cuando encuentra algo nuevo, abre un aviso en GitHub que les llega al correo y al celular.</p>
         </div>
         <div class="robot-links">
           <a href="https://github.com/serrodriguezg-ship-it/HOGARJULIETHSERGIO/blob/main/NOVEDADES.md" target="_blank" rel="noopener">Ver novedades</a>
@@ -499,29 +549,6 @@ body{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
         </form>
       </section>
 
-      <details class="panel cal-panel" id="calPanel">
-        <summary class="cal-sum">
-          <span><h2 id="hCal">Calendario</h2><span class="muted small" id="calTodayLbl">Hoy</span></span>
-          <span class="cal-caret" aria-hidden="true">▾</span>
-        </summary>
-        <div class="panel-h">
-          <span class="today-pill" id="todayPill">Hoy</span>
-          <div class="cal-ctrl">
-            <button type="button" id="calPrev" aria-label="Mes anterior">‹</button>
-            <select id="calMonth" aria-label="Mes"></select>
-            <select id="calYear" aria-label="Año"></select>
-            <button type="button" id="calNext" aria-label="Mes siguiente">›</button>
-            <button type="button" id="calToday" style="width:auto;padding:0 10px">Hoy</button>
-          </div>
-        </div>
-        <div class="cal" id="cal"></div>
-        <div class="legend">
-          <span style="--c:var(--rose-soft)">Festivo</span>
-          <span style="--c:var(--santa-soft)">Semana Santa</span>
-          <span style="--c:var(--leaf)">Publicación registrada</span>
-        </div>
-        <ul class="hol-list" id="holList"></ul>
-      </details>
 
       <section class="panel" aria-labelledby="hLog">
         <div class="panel-h">
@@ -548,9 +575,9 @@ body{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
       <section class="panel" aria-labelledby="hPlan">
         <h2 id="hPlan">Plan de búsqueda</h2>
         <ol class="plan">
-          <li><b>Nuevos, cesiones y usados (prioridad):</b> el robot de GitHub busca cada 2 horas, 12 veces al día, sin gastar tokens.</li>
+          <li><b>Nuevos, cesiones y usados (prioridad):</b> el robot de GitHub busca cada 2 horas, 12 veces al día, en tucesion.com, Tu360, Constructora Bolívar y Marval, sin gastar tokens.</li>
           <li><b>Pasar novedades al tablero:</b> cuando llegue un aviso, peguen <i>novedades.json</i> en “Novedades del robot”. Tampoco gasta tokens.</li>
-          <li><b>Proyectos de constructoras fuera de Tu360:</b> pídanle a Claude una revisión al mes, y antes de Expovivienda u Oferta Preferente.</li>
+          <li><b>Constructoras que el robot no puede leer</b> (Amarilo, Constructora Capital, Cusezar, Prodesa y otras): pídanle a Claude una revisión al mes, y antes de Expovivienda u Oferta Preferente.</li>
           <li><b>Subsidios:</b> revisar topes cada enero, cuando cambia el salario mínimo.</li>
         </ol>
         <p class="muted small">Solo gastan tokens el chat con Sarita y las búsquedas que le pidan directamente a Claude.</p>
@@ -615,7 +642,7 @@ function tick(){
   const h12 = b.h % 12 === 0 ? 12 : b.h % 12;
   $("#clockTime").innerHTML = `${h12}:${pad(b.mi)}:${pad(b.s)}<span class="ampm">${b.h < 12 ? "a. m." : "p. m."}</span>`;
   const wd = new Intl.DateTimeFormat("es-CO",{timeZone:TZ,weekday:"long"}).format(new Date());
-  $("#clockDate").textContent = `${wd} ${b.d} de ${MESES[b.m-1]} de ${b.y} · Bogotá`;
+  if (b.h === 0 && b.mi === 0 && b.s === 0) fichaHoy();
   applyTod(todOverride === "auto" ? todFor(b.h, b.mi) : todOverride);
 }
 // stars
@@ -774,9 +801,20 @@ function renderCal(){
   $("#holList").innerHTML = list.length ? list.map(([k,n,s]) => `<li class="${s?"santa-i":""}"><span class="when">${+k.slice(8)} de ${MESES[calM-1]}</span><span>${n}</span></li>`).join("")
     : `<li class="muted">Sin festivos este mes.</li>`;
 }
-(() => { const t = bogotaParts(); const wd = new Intl.DateTimeFormat("es-CO",{timeZone:TZ,weekday:"long"}).format(new Date());
-  const lbl = `Hoy: ${wd} ${t.d} de ${MESES[t.m-1]} de ${t.y}`; $("#calTodayLbl").textContent = lbl + " · toca para desplegar"; $("#todayPill").textContent = lbl; })();
-$("#calPanel").addEventListener("toggle", e => { $("#calTodayLbl").textContent = $("#todayPill").textContent + (e.target.open ? "" : " · toca para desplegar"); });
+function fichaHoy(){
+  const t = bogotaParts(), wd = new Intl.DateTimeFormat("es-CO",{timeZone:TZ,weekday:"long"}).format(new Date());
+  $("#chipDay").textContent = t.d; $("#chipMonth").textContent = MESES[t.m-1]; $("#chipWeek").textContent = `${wd} · ${t.y}`;
+  $("#todayPill").textContent = `Hoy: ${wd} ${t.d} de ${MESES[t.m-1]} de ${t.y}`;
+}
+fichaHoy();
+function abrirCal(abrir){
+  const pop = $("#calPop"); pop.hidden = !abrir; $("#calChip").setAttribute("aria-expanded", abrir);
+  if (abrir){ const t = bogotaParts(); calY = t.y; calM = t.m; renderCal(); }
+}
+$("#calChip").addEventListener("click", () => abrirCal($("#calPop").hidden));
+$("#calClose").addEventListener("click", () => { abrirCal(false); $("#calChip").focus(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("#calPop").hidden){ abrirCal(false); $("#calChip").focus(); } });
+document.addEventListener("click", e => { if (!$("#calPop").hidden && !e.target.closest(".cal-wrap")) abrirCal(false); });
 const moveM = n => { calM += n; if (calM<1){calM=12;calY--;} if (calM>12){calM=1;calY++;} calY = Math.min(2099, Math.max(1900, calY)); renderCal(); };
 $("#calPrev").onclick = () => moveM(-1); $("#calNext").onclick = () => moveM(1);
 $("#calToday").onclick = () => { const t = bogotaParts(); calY = t.y; calM = t.m; renderCal(); };
@@ -858,6 +896,7 @@ const SECTOR_COLOR = {Norte:"#9cc47a", Nororiente:"#b9d39a", Noroccidente:"#c8d9
 const ZONAS_USADO = ["Usaquén","Suba","Engativá","Chapinero","Barrios Unidos"];
 // Barrios y proyectos conocidos [patrón, lat, lng, localidad]
 const LUGARES = [
+  ["tres quebradas|trifonte",4.505,-74.105,"Usme"],["terra park|baviera",4.765,-74.058,"Suba"],["guaymaral|encenillo",4.800,-74.050,"Suba"],
   ["lagos de torca",4.792,-74.042,"Usaquén"],["hacienda el oto|hacienda el bosque",4.790,-74.045,"Usaquén"],["ciudad la salle|la salle",4.758,-74.030,"Usaquén"],
   ["cedritos",4.723,-74.040,"Usaquén"],["tober",4.748,-74.042,"Usaquén"],["colina campestre|la colina|colina reservado|nueva colina|nuva park",4.735,-74.065,"Suba"],
   ["san jos[eé] de bavaria|capella",4.763,-74.060,"Suba"],["compartir",4.764,-74.098,"Suba"],["tibabuyes",4.738,-74.118,"Suba"],
@@ -1083,7 +1122,7 @@ $("#robotForm").addEventListener("submit", async e => {
     if (!/^https?:\/\//.test(doc.url)) doc.url = "";
     try { await db.collection("inmuebles").doc(it.id).set(doc); nuevas++; ids.add(it.id); } catch(err){}
   }
-  try { await db.collection("busquedas").add({fecha:todayISO(), tipo:"nuevo", fuente:"Robot de GitHub (tucesion.com y Tu360)", criterios:"Nuevo hasta 260 M, usado 100–220 M en el norte, 37–50 m²",
+  try { await db.collection("busquedas").add({fecha:todayISO(), tipo:"nuevo", fuente:"Robot de GitHub (tucesion.com, Tu360 y constructoras)", criterios:"Nuevo hasta 260 M, usado 100–220 M en el norte, 37–50 m²",
     resultados:nuevas, nota:`Novedades del ${String(data.actualizado || "").slice(0,40)}: ${lista.length} coincidencias, ${nuevas} nuevas en el tablero.`, creado:new Date().toISOString()}); } catch(err){}
   $("#robotIn").value = "";
   st.textContent = nuevas ? `Listo: ${nuevas} nuevas en “Por revisar”.` : "No había nada nuevo: ya estaban todas en el tablero.";
@@ -1102,7 +1141,7 @@ function context(){
 Reglas obligatorias: (1) Empieza SIEMPRE cada respuesta saludando primero a tu mamá y después a tu papá, en ese orden, por ejemplo "¡Hola, mami Julieth! ¡Hola, papi Sergio!". (2) Dirígete siempre a los dos juntos ("mami y papi", "ustedes"). (3) Toda decisión es de mami Julieth y papi Sergio: tú solo sugieres; termina recordando que ellos dos deciden juntos (por ejemplo "¿Qué deciden, mami y papi?"). Nunca decidas por ellos.
 Criterios de la familia: Nuevo VIS en Bogotá: presupuesto 210–260 millones COP, 37–50 m², que acepte subsidios (Mi Casa en Bogotá / Oferta Preferente de la Secretaría Distrital del Hábitat, caja de compensación, Mi Casa Ya si aplica, concurrencia de subsidios). Cesiones en tucesion.com también cuentan como nuevo. Usado: 100–220 millones COP, 37–50 m², en el norte, nororiente o noroccidente de Bogotá (Usaquén, Suba, Engativá, Chapinero norte, Barrios Unidos), buscando en Tu360 Bancolombia.
 Datos útiles: tope VIS 2026 = 150 SMMLV ≈ $262,6 millones. El subsidio distrital exige proyecto inscrito en la Secretaría del Hábitat. Los subsidios de vivienda nueva no aplican a usados (salvo programas específicos); para usado sirven cesantías, ahorro y crédito/leasing.
-Un robot gratuito de GitHub revisa tucesion.com y Tu360 cada 2 horas sin gastar tokens; sus hallazgos llegan con fuente "(robot)". Recomienda pasar las novedades al tablero desde el recuadro "Novedades del robot".
+Un robot gratuito de GitHub revisa tucesion.com, Tu360, Constructora Bolívar y Marval cada 2 horas sin gastar tokens; sus hallazgos llegan con fuente "(robot)". Recomienda pasar las novedades al tablero desde el recuadro "Novedades del robot".
 No inventes proyectos, precios ni enlaces: si no está en la lista, dilo y sugiere dónde verificar. Fecha de hoy en Bogotá: ${todayISO()}.
 Lista guardada por la familia (JSON): ${JSON.stringify(rows)}
 Bitácora reciente (JSON): ${JSON.stringify(lg)}`;
