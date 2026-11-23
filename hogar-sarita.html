@@ -261,6 +261,44 @@ details.add summary{cursor:pointer;padding:10px 14px;font-weight:800;font-family
 @keyframes fabPulse{0%,100%{box-shadow:0 6px 20px rgba(194,86,107,.45)}50%{box-shadow:0 6px 28px rgba(194,86,107,.75)}}
 @media (max-width:520px){.fab-txt{display:none}.fab{padding:6px}}
 @media (prefers-reduced-motion:reduce){.fab{animation:none}}
+
+/* Todas las pantallas */
+body{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+.status:empty{display:none}
+.chat-panel.llamada{animation:llamada 1.6s ease-out 1}
+@keyframes llamada{0%{box-shadow:0 0 0 0 rgba(232,138,160,.9)}70%{box-shadow:0 0 0 18px rgba(232,138,160,0)}100%{box-shadow:0 10px 32px rgba(194,86,107,.28)}}
+@media (min-width:1600px){.wrap{max-width:1440px} body{font-size:16px}}
+@media (max-width:760px){
+  .clock{width:100%;justify-content:space-between}
+  .clock #callBtn{display:none}            /* en celular y tableta queda el botón flotante */
+}
+@media (max-width:600px){
+  body{font-size:15px}
+  .wrap{gap:14px}
+  .brand svg{width:42px;height:42px}
+  .clock .time{font-size:1.7rem}
+  .scene{aspect-ratio:4/3.2;min-height:0;border-radius:18px}
+  .sarita{width:clamp(78px,24%,120px)}
+  .scene-tag{display:none}
+  .scene-bar{justify-content:flex-end}
+  .bubble{max-width:82%;left:6%;transform:none;font-size:.86rem;bottom:58%}
+  .panel{padding:14px;border-radius:16px}
+  .chat-panel{padding:14px}
+  .chat-head{align-items:flex-start}
+  .chat-head .avatar{width:52px;height:52px}
+  .chat-panel .msgs{max-height:34vh}
+  .chat-head p{font-size:.84rem}
+  .msg{max-width:94%}
+  .cards{grid-template-columns:minmax(0,1fr)}
+  .cal .d{border-radius:8px;font-size:.85rem}
+  .trash-item .tacts{width:100%}
+  .trash-item .tacts button{flex:1}
+}
+@media (max-width:380px){
+  .brand h1{font-size:1.15rem}
+  .chat form{flex-wrap:wrap}
+  .chat form .btn-main{width:100%}
+}
 </style>
 
 <div class="wrap">
@@ -609,7 +647,17 @@ let tts = null, bubbleTimer = null;
 function say(text, ms=7000){ const b=$("#bubble"); b.textContent=text; b.hidden=false; clearTimeout(bubbleTimer); bubbleTimer=setTimeout(()=>{ b.hidden=true; }, ms); }
 function speak(text){ if (!tts) return; tts.speak(text.slice(0,1900), {voice:"airy"}).catch(()=>{}); }
 let callTimer = null;
-$("#fabBtn").addEventListener("click", () => { $("#scene").scrollIntoView({behavior:"smooth", block:"center"}); $("#callBtn").click(); });
+function mostrarChat(){ // al llamar a Sarita, el chat queda a la vista (con la escena encima si cabe)
+  const sc = $("#scene"), ch = $(".chat-panel");
+  const sTop = sc.getBoundingClientRect().top + window.scrollY - 12;
+  const cRect = ch.getBoundingClientRect(), cTop = cRect.top + window.scrollY - 12, cBottom = cRect.bottom + window.scrollY;
+  // el chat completo a la vista y por encima del botón flotante; si sobra espacio, también la escena
+  const y = Math.min(Math.max(cBottom - (window.innerHeight - 96), sTop), cTop);
+  window.scrollTo({top:Math.max(0,y), behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"});
+  ch.classList.remove("llamada"); void ch.offsetWidth; ch.classList.add("llamada");
+  if (matchMedia("(pointer: fine)").matches) setTimeout(() => $("#chatIn").focus({preventScroll:true}), 600);
+}
+$("#fabBtn").addEventListener("click", () => $("#callBtn").click());
 $("#callBtn").addEventListener("click", () => {
   const s = $("#sarita");
   const cur = s.getBoundingClientRect().left - $("#scene").getBoundingClientRect().left;
@@ -619,6 +667,8 @@ $("#callBtn").addEventListener("click", () => {
   const pend = items.filter(x => x.estado === "pendiente").length;
   const msg = SALUDOS[currentTod] + (pend ? ` Tenemos ${pend} opciones esperando su decisión.` : "");
   say(msg, 8000); speak(msg);
+  addMsg("sa", msg + " ¿En qué les ayudo?");
+  mostrarChat();
   clearTimeout(callTimer);
   callTimer = setTimeout(() => { s.classList.remove("called"); s.style.left = ""; }, 9000);
 });
