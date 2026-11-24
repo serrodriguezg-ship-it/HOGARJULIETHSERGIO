@@ -1,5 +1,5 @@
 {
-  "actualizado": "23/11/2026, 11:57:28 p. m.",
+  "actualizado": "24/11/2026, 12:57:04 p. m.",
   "fuentes": {
     "cesiones": {
       "revisados": 12,
@@ -7,7 +7,7 @@
     },
     "usados": {
       "revisados": 36,
-      "coincidencias": 1
+      "coincidencias": 0
     },
     "nuevos": {
       "revisados": 36,
@@ -36,21 +36,6 @@
   },
   "nuevas": [],
   "items": [
-    {
-      "id": "auto-tu360-to-en-venta-en-bogota-dc-compartir-ar-soluciones-inmobiliarias-sas-60676069512-3",
-      "tipo": "usado",
-      "nombre": "Apartamento en compartir",
-      "constructora": "Ar soluciones inmobiliarias s.a.s.",
-      "zona": "compartir",
-      "area": 48,
-      "precio": 217000000,
-      "fechaPub": "2026-11-22",
-      "fuente": "Tu360 Bancolombia (robot)",
-      "url": "https://inmobiliariotu360.bancolombia.com/apartamento-en-venta-en-bogota-dc-compartir-ar-soluciones-inmobiliarias-sas-60676069512-3/p",
-      "subsidios": "Usado: crédito/leasing, cesantías, ahorro",
-      "nota": "3 habitaciones.",
-      "detectado": "2026-11-22"
-    },
     {
       "id": "auto-tu360-rosa-violeta-ciudad-rosales",
       "tipo": "nuevo",
@@ -426,6 +411,22 @@
       "subsidios": "Proyecto VIS/VIP: confirmar subsidio distrital y caja",
       "nota": "VIS. Desde 42.02 m² y $245.000.000.",
       "detectado": "2026-11-22"
+    },
+    {
+      "id": "auto-tu360-to-en-venta-en-bogota-dc-compartir-ar-soluciones-inmobiliarias-sas-60676069512-3",
+      "tipo": "usado",
+      "nombre": "Apartamento en compartir",
+      "constructora": "Ar soluciones inmobiliarias s.a.s.",
+      "zona": "compartir",
+      "area": 48,
+      "precio": 217000000,
+      "fechaPub": "2026-11-22",
+      "fuente": "Tu360 Bancolombia (robot)",
+      "url": "https://inmobiliariotu360.bancolombia.com/apartamento-en-venta-en-bogota-dc-compartir-ar-soluciones-inmobiliarias-sas-60676069512-3/p",
+      "subsidios": "Usado: crédito/leasing, cesantías, ahorro",
+      "nota": "3 habitaciones.",
+      "detectado": "2026-11-22",
+      "vigente": false
     }
   ]
 }
