@@ -1,6 +1,6 @@
 # Novedades de la búsqueda
 
-Última revisión del robot: **24/11/2026, 12:57:04 p. m.** (hora de Bogotá).
+Última revisión del robot: **24/11/2026, 9:38:31 p. m.** (hora de Bogotá).
 
 | Fuente | Anuncios revisados | Coincidencias |
 |---|---|---|
@@ -8,7 +8,7 @@
 | usados | 36 | 0 |
 | nuevos | 36 | 13 |
 | Constructora Bolívar | 4 | 1 |
-| Marval | 16 | 1 |
+| Marval | 17 | 1 |
 | Ingeurbe | 18 | 3 |
 | Cusezar | 26 | 5 |
 | Artis Urbano | 5 | 1 |
