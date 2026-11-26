@@ -1,6 +1,6 @@
 # Novedades de la búsqueda
 
-Última revisión del robot: **26/11/2026, 6:04:08 a. m.** (hora de Bogotá).
+Última revisión del robot: **26/11/2026, 4:43:53 p. m.** (hora de Bogotá).
 
 | Fuente | Anuncios revisados | Coincidencias |
 |---|---|---|
@@ -13,11 +13,7 @@
 | Cusezar | 26 | 5 |
 | Artis Urbano | 5 | 1 |
 
-## Nuevas en esta revisión (1)
-
-| Detectado | Tipo | Anuncio | Zona | Área | Precio | |
-|---|---|---|---|---|---|---|
-| 2026-11-26 | Usado | [Apartamento en tibabuyes universal](https://inmobiliariotu360.bancolombia.com/apartamento-en-venta-en-bogota-dc-tibabuyes-universal-tu360inmobiliario-dmp877-3/p) | tibabuyes universal | 42.3 m² | $200.000.000 | |
+## Sin coincidencias nuevas en esta revisión
 
 ## Todas las coincidencias
 
