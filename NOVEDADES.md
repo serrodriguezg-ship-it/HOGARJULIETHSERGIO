@@ -1,6 +1,6 @@
 # Novedades de la búsqueda
 
-Última revisión del robot: **25/11/2026, 9:34:39 a. m.** (hora de Bogotá).
+Última revisión del robot: **25/11/2026, 7:30:59 p. m.** (hora de Bogotá).
 
 | Fuente | Anuncios revisados | Coincidencias |
 |---|---|---|
