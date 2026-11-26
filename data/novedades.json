@@ -1,5 +1,5 @@
 {
-  "actualizado": "25/11/2026, 7:30:59 p. m.",
+  "actualizado": "26/11/2026, 6:04:08 a. m.",
   "fuentes": {
     "cesiones": {
       "revisados": 12,
@@ -7,7 +7,7 @@
     },
     "usados": {
       "revisados": 36,
-      "coincidencias": 0
+      "coincidencias": 1
     },
     "nuevos": {
       "revisados": 36,
@@ -34,8 +34,25 @@
       "coincidencias": 1
     }
   },
-  "nuevas": [],
+  "nuevas": [
+    "auto-tu360-apartamento-en-venta-en-bogota-dc-tibabuyes-universal-tu360inmobiliario-dmp877-3"
+  ],
   "items": [
+    {
+      "id": "auto-tu360-apartamento-en-venta-en-bogota-dc-tibabuyes-universal-tu360inmobiliario-dmp877-3",
+      "tipo": "usado",
+      "nombre": "Apartamento en tibabuyes universal",
+      "constructora": "Tu360inmobiliario",
+      "zona": "tibabuyes universal",
+      "area": 42.3,
+      "precio": 200000000,
+      "fechaPub": "2026-11-26",
+      "fuente": "Tu360 Bancolombia (robot)",
+      "url": "https://inmobiliariotu360.bancolombia.com/apartamento-en-venta-en-bogota-dc-tibabuyes-universal-tu360inmobiliario-dmp877-3/p",
+      "subsidios": "Usado: crédito/leasing, cesantías, ahorro",
+      "nota": "2 habitaciones.",
+      "detectado": "2026-11-26"
+    },
     {
       "id": "auto-tu360-rosa-violeta-ciudad-rosales",
       "tipo": "nuevo",
