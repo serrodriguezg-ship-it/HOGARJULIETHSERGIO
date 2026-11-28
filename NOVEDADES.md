@@ -1,6 +1,6 @@
 # Novedades de la búsqueda
 
-Última revisión del robot: **27/11/2026, 11:50:12 a. m.** (hora de Bogotá).
+Última revisión del robot: **27/11/2026, 8:34:59 p. m.** (hora de Bogotá).
 
 | Fuente | Anuncios revisados | Coincidencias |
 |---|---|---|
@@ -8,7 +8,7 @@
 | usados | 36 | 1 |
 | nuevos | 36 | 13 |
 | Constructora Bolívar | 4 | 1 |
-| Marval | 18 | 0 |
+| Marval | 18 | 1 |
 | Ingeurbe | 18 | 3 |
 | Cusezar | 26 | 5 |
 | Artis Urbano | 5 | 1 |
@@ -34,6 +34,7 @@
 | 2026-11-22 | Nuevo | [Ciruelo hacienda el bosque lagos de torca](https://inmobiliariotu360.bancolombia.com/proyecto-de-vivienda-ciruelo-hacienda-el-bosque-lagos-de-torca/p) | Bogotá | 44 m² | $252.000.000 | |
 | 2026-11-22 | Nuevo | [Alicante hacienda el otoño lagos de torca](https://inmobiliariotu360.bancolombia.com/proyecto-de-vivienda-alicante-hacienda-el-oto%C3%B1o-lagos-de-torca/p) | Bogotá | 44 m² | $251.400.000 | |
 | 2026-11-22 | Nuevo | [Trifonte - Tres Quebradas](https://www.constructorabolivar.com/proyectos-vivienda/bogota/trifonte-tres-quebradas) | Bogotá – Sur Oriente | 47 m² | $204.020.000 | |
+| 2026-11-22 | Nuevo | [Ciudad La Salle Giverny](https://proyectos.marval.com.co/ciudad-la-salle-giverny) | Bogotá | 30.09 m² | $188.941.000 | |
 | 2026-11-22 | Nuevo | [Centrik Park](https://ingeurbe.com/proyecto/vivienda-de-interes-social-en-bogota) | Bogotá | 30 m² | $255.900.000 | |
 | 2026-11-22 | Nuevo | [53 Living: Apartaestudios cerca a la Calle 26, Bogotá](https://ingeurbe.com/proyecto/53-living) | Bogotá | 28 m² | $245.600.000 | |
 | 2026-11-22 | Nuevo | [Centrik Park](https://ingeurbe.com/proyecto/centrik-park) | Bogotá | 30 m² | $255.900.000 | |
@@ -43,7 +44,6 @@
 | 2026-11-22 | Nuevo | [La Gratitud Iv](https://cusezar.com/proyectos/con-subsidio/la-gratitud-iv) | Bogotá | 44 m² | $231.000.000 | |
 | 2026-11-22 | Nuevo | [La Gratitud Ii](https://cusezar.com/proyectos/con-subsidio/la-gratitud-ii) | Bogotá | 41 m² | $215.300.000 | |
 | 2026-11-22 | Nuevo | [Arboré](https://www.artisurbano.com/proyectos/ver/2/arbore) | Bogotá | 42.02 m² | $245.000.000 | |
-| 2026-11-22 | Nuevo | [Ciudad La Salle Giverny](https://proyectos.marval.com.co/ciudad-la-salle-giverny) | Bogotá | 30.09 m² | $188.941.000 | ya no aparece |
 | 2026-11-22 | Usado | [Apartamento en compartir](https://inmobiliariotu360.bancolombia.com/apartamento-en-venta-en-bogota-dc-compartir-ar-soluciones-inmobiliarias-sas-60676069512-3/p) | compartir | 48 m² | $217.000.000 | ya no aparece |
 
 Para pasarlas al tablero de Sarita: abre `data/novedades.json`, copia todo y pégalo en el recuadro **Novedades del robot** del tablero.
